@@ -482,7 +482,7 @@ const Liveness = () => {
   useEffect(() => {
     setTimeout(() => {
       if (!ready) setIsMustReload(true);
-    }, 15000);
+    }, 25000);
   }, []);
 
   return (
@@ -541,6 +541,7 @@ const Liveness = () => {
             setFailedMessage={setFailedMessage}
             setProgress={setProgress}
             setHumanReady={setHumanReady}
+            isGenerateAction={isGenerateAction}
             deviceState={(state) => {
               setShowUnsupportedDeviceModal(state);
             }}

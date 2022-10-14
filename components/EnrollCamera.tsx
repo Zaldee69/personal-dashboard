@@ -43,14 +43,13 @@ interface Props {
   setProgress: Dispatch<SetStateAction<number>>;
   setCurrentActionIndex: Dispatch<SetStateAction<number>>;
   setFailedMessage: Dispatch<SetStateAction<string>>;
-  isGenerateAction: boolean
   setHumanReady: () => void;
   deviceState?: (state: IdeviceState) => void;
 }
 
 type TcameraDevicePermission = PermissionState | null;
 
-const Camera: React.FC<Props> = ({
+const EnrollCamera: React.FC<Props> = ({
   currentStep,
   currentActionIndex,
   setCurrentActionIndex,
@@ -58,7 +57,6 @@ const Camera: React.FC<Props> = ({
   setProgress,
   setHumanReady,
   deviceState,
-  isGenerateAction
 }) => {
   const constraints: Constraint = {
     width: 1280,
@@ -208,6 +206,7 @@ const Camera: React.FC<Props> = ({
             look_center = true;
           }
         });
+        console.log(actionList[currentActionIndex])
         if (actionList[currentActionIndex] == "look_straight") {
           if (look_center && distance < 25) {
             if (roll > -10 && roll < 10) {
@@ -432,10 +431,6 @@ const Camera: React.FC<Props> = ({
     }, 1500);
   }, []);
 
-  useEffect(() => {
-    if(!isGenerateAction) onPlay()
-  }, [isGenerateAction])
-
   return (
     <div className="relative">
       <Webcam
@@ -451,6 +446,8 @@ const Camera: React.FC<Props> = ({
         mirrored={false}
         minScreenshotHeight={720}
         videoConstraints={constraints}
+        onLoadedMetadata={(e) => onPlay()}
+  
       />
       <div className={`circle-container`}>
         <CircularProgressBar percent={percent} error={error} />
@@ -464,4 +461,4 @@ const Camera: React.FC<Props> = ({
   );
 };
 
-export default Camera;
+export default EnrollCamera;
