@@ -275,7 +275,7 @@ const RevokeMekari = () => {
   useEffect(() => {
     setTimeout(() => {
       if (!ready) setIsMustReload(true);
-    }, 15000);
+    }, 25000);
   }, []);
 
   return (
@@ -334,6 +334,7 @@ const RevokeMekari = () => {
             setFailedMessage={setFailedMessage}
             setProgress={setProgress}
             setHumanReady={setHumanReady}
+            isGenerateAction={isGenerateAction}
             deviceState={(state) => {
               setShowUnsupportedDeviceModal(state);
             }}

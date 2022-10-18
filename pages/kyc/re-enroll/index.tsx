@@ -1,4 +1,4 @@
-import Camera, { IdeviceState } from "@/components/Camera";
+import EnrollCamera, { IdeviceState } from "@/components/EnrollCamera";
 import Footer from "@/components/Footer";
 import ProgressStepBar from "@/components/ProgressStepBar";
 import Head from "next/head";
@@ -417,7 +417,7 @@ const ReEnrollMekari = () => {
                   </div>
                 </div>
               )}
-              <Camera
+              <EnrollCamera
                 currentActionIndex={currentActionIndex}
                 setCurrentActionIndex={setCurrentActionIndex}
                 currentStep="Liveness Detection"
