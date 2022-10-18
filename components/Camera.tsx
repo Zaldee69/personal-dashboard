@@ -450,6 +450,17 @@ const Camera: React.FC<Props> = ({
         minScreenshotWidth={1280}
         mirrored={false}
         minScreenshotHeight={720}
+        onLoadedMetadata={(e) => {
+          onPlay();
+
+          // We assume the PermissionStatus state is granted.
+          // Because metadata is loaded only when permission is granted.
+          // This is for handling browser that not support PermissionStatus change event.
+          if (cameraDevicePermission !== "granted") {
+            console.log("we assume the PermissionStatus state is granted");
+            setCameraDevicePermission("granted");
+          }
+        }}
         videoConstraints={constraints}
       />
       <div className={`circle-container`}>

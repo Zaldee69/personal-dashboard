@@ -10,7 +10,7 @@ import Head from "next/head";
 import { TLoginProps } from "@/interface/interface";
 import { assetPrefix } from "../../next.config";
 import { handleRoute } from "./../../utils/handleRoute";
-import { getCertificateList } from "infrastructure/rest/b2b";
+import { getCertificateList, getUserName } from "infrastructure/rest/b2b";
 import { GetServerSideProps } from "next";
 import { TKycCheckStepResponseData } from "infrastructure/rest/kyc/types";
 import { RestKycCheckStep } from "infrastructure";
@@ -26,11 +26,12 @@ type Tform = {
 
 const LinkAccount = (props: Props) => {
   const router = useRouter();
-  const {t} : any = i18n
+  const { t }: any = i18n;
   const [showPassword, showPasswordSetter] = useState<boolean>(false);
   const [nikRegistered, nikRegisteredSetter] = useState<boolean>(true);
   const [form, formSetter] = useState<Tform>({ tilaka_name: "", password: "" });
-  const { nik, request_id, signing, ...restRouterQuery } = router.query;
+  const { nik, request_id, signing, setting, ...restRouterQuery } =
+    router.query;
   const dispatch: AppDispatch = useDispatch();
   const data = useSelector((state: RootState) => state.login);
 
@@ -70,24 +71,43 @@ const LinkAccount = (props: Props) => {
       }
       localStorage.setItem("refresh_token", data.data.data[1] as string);
       localStorage.setItem("token", data.data.data[0] as string);
-      if (signing === "1") {
+      if (signing === "1" || setting === "1") {
         getCertificateList({ params: "" as string }).then((res) => {
           const certif = JSON.parse(res.data);
           if (certif[0].status == "Aktif") {
-            router.replace({
-              pathname: handleRoute("/link-account/success"),
-              query: { ...queryWithDynamicRedirectURL },
+            getUserName({}).then((res) => {
+              const data = JSON.parse(res.data);
+              if (data.typeMfa == null) {
+                if (setting === "1") {
+                  router.replace({
+                    pathname: handleRoute("setting-signature-and-mfa"),
+                    query: {
+                      ...queryWithDynamicRedirectURL,
+                    },
+                  });
+                } else {
+                  router.replace({
+                    pathname: handleRoute("link-account/success"),
+                    query: { ...queryWithDynamicRedirectURL },
+                  });
+                }
+              } else {
+                router.replace({
+                  pathname: handleRoute("link-account/success"),
+                  query: { ...queryWithDynamicRedirectURL },
+                });
+              }
             });
           } else {
             router.replace({
-              pathname: handleRoute("/certificate-information"),
+              pathname: handleRoute("certificate-information"),
               query: { ...queryWithDynamicRedirectURL },
             });
           }
         });
       } else {
         router.replace({
-          pathname: handleRoute("/link-account/success"),
+          pathname: handleRoute("link-account/success"),
           query: { ...queryWithDynamicRedirectURL },
         });
       }
@@ -96,13 +116,13 @@ const LinkAccount = (props: Props) => {
       (data.status === "FULLFILLED" && !data.data.success)
     ) {
       router.replace({
-        pathname: handleRoute("/link-account/failure"),
+        pathname: handleRoute("link-account/failure"),
         query: {
           ...router.query,
         },
       });
     }
-  }, [data.status]);
+  }, [data.status]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <>
@@ -119,6 +139,7 @@ const LinkAccount = (props: Props) => {
             src={`${assetPrefix}/images/linkAccount.svg`}
             width="150px"
             height="150px"
+            alt="linkAccount-ill"
           />
         </div>
         {nikRegistered && (
@@ -192,6 +213,7 @@ const LinkAccount = (props: Props) => {
                 src={`${assetPrefix}/images/lineVertical.svg`}
                 width="8px"
                 height="24px"
+                alt="lineVertical"
               />
             </div>
             <a

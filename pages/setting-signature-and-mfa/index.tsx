@@ -16,7 +16,7 @@ import { GetServerSideProps } from "next";
 import { TKycCheckStepResponseData } from "infrastructure/rest/kyc/types";
 import { RestKycCheckStep } from "infrastructure";
 import { serverSideRenderReturnConditions } from "@/utils/serverSideRenderReturnConditions";
-import i18n from "i18"
+import i18n from "i18";
 
 type Props = {};
 
@@ -33,7 +33,7 @@ type Tform = {
   mfa_method: "fr" | "otp" | "otp_ponsel";
 };
 
-const {t}: any = i18n
+const { t }: any = i18n;
 
 function SettingSignatureAndMFA({}: Props) {
   const [form, formSetter] = useState<Tform>({
@@ -46,7 +46,7 @@ function SettingSignatureAndMFA({}: Props) {
   let ref: any = null;
   const sigPad = useRef<any>();
   const router = useRouter();
-  const {t}: any = i18n
+  const { t }: any = i18n;
   const [showModalOtpPonsel, showModalOtpPonselSetter] =
     useState<boolean>(false);
   const [agreeOtpPonsel, agreeOtpPonselSetter] = useState<boolean>(false);
@@ -114,9 +114,7 @@ function SettingSignatureAndMFA({}: Props) {
       toast.dismiss("info");
       toast(
         `${
-          signature_type === 0
-            ? t("handwritingRequired")
-            : t("FontRequired")
+          signature_type === 0 ? t("handwritingRequired") : t("FontRequired")
         }`,
         {
           type: "error",
@@ -136,16 +134,26 @@ function SettingSignatureAndMFA({}: Props) {
               type: "success",
               toastId: "success",
             });
-            setTimeout(() => {
-              toast.dismiss("success");
-              router.replace({
-                pathname:
-                  router.query.v2 === "1"
-                    ? handleRoute("/signing/v2")
-                    : handleRoute("/signing"),
-                query: { ...router.query },
-              });
-            }, 3000);
+            if (router.query.setting === "1" && router.query.signing !== "1") {
+              setTimeout(() => {
+                toast.dismiss("success");
+                router.replace({
+                  pathname: handleRoute("link-account/success"),
+                  query: { ...router.query },
+                });
+              }, 3000);
+            } else {
+              setTimeout(() => {
+                toast.dismiss("success");
+                router.replace({
+                  pathname:
+                    router.query.v2 === "1"
+                      ? handleRoute("signing/v2")
+                      : handleRoute("signing"),
+                  query: { ...router.query },
+                });
+              }, 3000);
+            }
           } else {
             toast.dismiss("info");
             toast(res.message, {
@@ -166,7 +174,7 @@ function SettingSignatureAndMFA({}: Props) {
               icon: XIcon,
             });
             router.replace({
-              pathname: handleRoute("/login"),
+              pathname: handleRoute("login"),
               query: { ...router.query },
             });
           } else {
@@ -202,7 +210,9 @@ function SettingSignatureAndMFA({}: Props) {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <div className="bg-white p-4 font-poppins">
-        <h1 className="text-xl font-semibold mt-2" >{t("settingSignatureTitle")}</h1>
+        <h1 className="text-xl font-semibold mt-2">
+          {t("settingSignatureTitle")}
+        </h1>
         <form onSubmit={handleFormOnSubmit}>
           <div className="flex justify-center">
             <img src="images/ttdSetting.svg" alt="ill" />
@@ -213,7 +223,7 @@ function SettingSignatureAndMFA({}: Props) {
               <InfoIcon />
             </div>
             <p className="text-xs text-blue500 ml-4">
-             {t("chooseSignatureInformation")}
+              {t("chooseSignatureInformation")}
             </p>
           </div>
           <div className="mt-5">
@@ -239,7 +249,9 @@ function SettingSignatureAndMFA({}: Props) {
                 type="radio"
                 className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 text-_030326">{t("signatureOption2")}</p>
+              <p className="text-md ml-2.5 text-_030326">
+                {t("signatureOption2")}
+              </p>
             </label>
           </div>
           <div className={form.signature_type == 0 ? undefined : "hidden"}>
@@ -343,14 +355,15 @@ function SettingSignatureAndMFA({}: Props) {
               <InfoIcon />
             </div>
             <p className="text-xs text-blue500 ml-4">
-              {
-                i18n.language === "en" ? t("choosetAutheticantionModeInformation") : (
-                 <>
-                   Demi keamanan, diperlukan {" "}
-                  <i>Multi Factor Authentication</i> yang harus Anda gunakan saat melakukan aktivitas tanda tangan digital atau layanan Tilaka lainnya.
-                 </>
-                )
-              }
+              {i18n.language === "en" ? (
+                t("choosetAutheticantionModeInformation")
+              ) : (
+                <>
+                  Demi keamanan, diperlukan <i>Multi Factor Authentication</i>{" "}
+                  yang harus Anda gunakan saat melakukan aktivitas tanda tangan
+                  digital atau layanan Tilaka lainnya.
+                </>
+              )}
             </p>
           </div>
           <div className="mt-6">
@@ -394,7 +407,7 @@ function SettingSignatureAndMFA({}: Props) {
                 className="appearance-none disabled:opacity-50 bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
               <p className="text-md ml-2.5 opacity-50 text-_030326">
-                {t('autheticantionMode3')}
+                {t("autheticantionMode3")}
               </p>
             </label>
           </div>

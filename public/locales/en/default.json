@@ -2,7 +2,7 @@
   "guideTitle": "Please pay attention to following points during Liveness process to get better result.",
   "guideSubtitle1": "Face facing forward with clear background",
   "guideSubtitle2": "Take off any accessories such as glasses, hat, face masks, and hair doesn’t cover the face.",
-  "guideSubtitle3": "Make sure the lighting is good, not too bright and not too dark.",
+  "guideSubtitle3": "Ensure the lighting is good, not too bright and not too dark.",
   "startButton": "Start",
   "livenessFailedTitle": "Liveness Failed",
   "livenessFailedSubtitle": "Sorry, your Liveness process failed. Photo does not match the required action. Please redo the process and follow the instructions properly.",
@@ -135,7 +135,7 @@
   "failed": "failed",
   "success": "Success",
   "documentExpired": "Document Expired",
-  "closeYourFace": "Close your face"
+  "closeYourFace": "Move your face closer"
 
 
 }

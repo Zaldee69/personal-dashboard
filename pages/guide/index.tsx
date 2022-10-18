@@ -168,7 +168,7 @@ const Guide = () => {
         </div>
         <Link
           href={{
-            pathname: handleRoute(`/liveness`),
+            pathname: handleRoute(`liveness`),
             query: {
               ...restRouterQuery,
               request_id: request_id,

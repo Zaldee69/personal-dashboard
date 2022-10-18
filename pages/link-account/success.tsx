@@ -10,7 +10,7 @@ import { TKycCheckStepResponseData } from "infrastructure/rest/kyc/types";
 import { RestKycCheckStep } from "infrastructure";
 import { serverSideRenderReturnConditions } from "@/utils/serverSideRenderReturnConditions";
 import { concateRedirectUrlParams } from "@/utils/concateRedirectUrlParams";
-import i18n from 'i18'
+import i18n from "i18";
 
 type Props = {};
 
@@ -23,7 +23,7 @@ const LinkAccountSuccess = (props: Props) => {
   } = router.query;
   const isSigning: boolean = routerQuery.signing === "1";
 
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   useEffect(() => {
     if (!routerIsReady) return;
@@ -37,7 +37,7 @@ const LinkAccountSuccess = (props: Props) => {
         });
       }, 1000);
     }
-  }, [isSigning, routerIsReady]);
+  }, [isSigning, routerIsReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="px-10 pt-16 pb-9 text-center">

@@ -7,7 +7,7 @@ export const log = (...msg: any) => {
     dom.log.innerText = msg
     dom.log.style.color = "rgba(107, 119, 140, 1)"
     track.style.stroke = "#fff"
-    if(msg[0] === "Dekatkan wajah Anda" || msg[0] === "Close your face"){
+    if(msg[0] === "Dekatkan wajah Anda" || msg[0] === "Move your face closer"){
         dom.log.style.color = "#FF5630"
         track.style.stroke = "#DE350B"
     }
