@@ -487,7 +487,14 @@ const Liveness = () => {
 
   return (
     <>
-      <Head>
+        <div className="wrapper">
+    <div className="header-bar">
+      <h4>This is Header</h4>
+    </div>
+    <div className="content">
+      <div className="content-internal"></div>
+      <div className="content-external">
+        <Head>
         <title>Liveness</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
@@ -495,16 +502,73 @@ const Liveness = () => {
         <h2 className="font-poppins text-xl font-semibold">
           {isGenerateAction ? <SkeletonLoading width="w-2/5" /> : "Liveness"}
         </h2>
-        <span className="font-poppins text-sm mt-5 block">
-          {isGenerateAction ? (
-            <SkeletonLoading width="w-full" isDouble />
-          ) : (
-            subtitle
-          )}
-        </span>
+        {(!isStepDone && actionList.length > 1) || isMustReload ? (
+          <div className="flex gap-5 mx-2 mt-5" >
+            <div className="mt-1">
+              {!isGenerateAction && (
+                <Image
+                  src={`/images/${
+                    !isStepDone ? "hadap-depan" : currentIndex
+                  }.svg`}
+                  width={50}
+                  height={50}
+                  alt="1"
+                  layout="fixed"
+                />
+              )}
+            </div>
+            <div className="flex items-center justify-center flex-col">
+              <span className={`font-poppins w-full  font-medium`}>
+                {t("lookStraight")}
+              </span>
+              <span
+                id={isMustReload ? "" : "log"}
+                className=" font-poppins text-sm w-full  text-neutral"
+              >
+                {t("dontMove")}
+              </span>
+            </div>
+          </div>
+        ) : (
+          <div>
+            {isGenerateAction && (
+              <div className="flex items-center justify-center mt-14 flex-col">
+                <SkeletonLoading width="w-full" isDouble />
+              </div>
+            )}
+            {!isLoading && (
+              <div className="flex gap-5 mx-2 mt-5">
+                <div className="mt-1">
+                  {actionList.length === 2 && (
+                    <Image
+                      src={`/images/${currentIndex}.svg`}
+                      width={50}
+                      height={50}
+                      alt="2"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-poppins font-medium">
+                    {actionText()}
+                  </span>
+                  {failedMessage ? (
+                    <span className="font-poppins text-sm text-red300">
+                      {failedMessage}
+                    </span>
+                  ) : (
+                    <span className="font-poppins text-sm text-neutral">
+                      {actionList.length > 1 && t("dontMove")}
+                    </span>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
         <div
           className={[
-            "mt-5 rounded-md h-[350px] flex justify-center items-center sm:w-full md:w-full",
+            "mt-5 rounded-md h-[300px] flex justify-center items-center sm:w-full md:w-full",
             isLoading ? "block" : "hidden",
           ].join(" ")}
         >
@@ -514,14 +578,14 @@ const Liveness = () => {
           {!ready && (
             <div
               id="loading"
-              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[350px] flex justify-center items-center`}
+              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[300px] flex justify-center items-center`}
             >
               <Loading title={t("initializing")} />
             </div>
           )}
           {isMustReload && (
             <div
-              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[350px] flex justify-center items-center`}
+              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[300px] flex justify-center items-center`}
             >
               <div className="text-center text-neutral50 font-poppins">
                 <p>{t("intializingFailed")}</p>
@@ -546,69 +610,6 @@ const Liveness = () => {
             }}
           />
         </div>
-        {(!isStepDone && actionList.length > 1) || isMustReload ? (
-          <>
-            <div className="mt-5 flex justify-center">
-              {!isGenerateAction && (
-                <Image
-                  src={`${assetPrefix}/images/${
-                    !isStepDone ? "hadap-depan" : currentIndex
-                  }.svg`}
-                  width={50}
-                  height={50}
-                  alt="1"
-                />
-              )}
-            </div>
-            <div className="flex items-center justify-center mt-5 flex-col">
-              <span className={`font-poppins w-full text-center font-medium`}>
-                {t("lookStraight")}
-              </span>
-              <span
-                id={isMustReload ? "" : "log"}
-                className="text-center font-poppins text-sm w-full mt-7 text-neutral"
-              >
-                {t("dontMove")}
-              </span>
-            </div>
-          </>
-        ) : (
-          <div>
-            {isGenerateAction && (
-              <div className="flex items-center justify-center mt-14 flex-col">
-                <SkeletonLoading width="w-full" isDouble />
-              </div>
-            )}
-            {!isLoading && (
-              <>
-                <div className="mt-5 flex justify-center">
-                  {actionList.length === 2 && (
-                    <Image
-                      src={`${assetPrefix}/images/${currentIndex}.svg`}
-                      width={50}
-                      height={50}
-                      alt="2"
-                    />
-                  )}
-                </div>
-                <div className="flex items-center justify-center mt-5 flex-col">
-                  <span className="font-poppins font-medium">
-                    {actionText()}
-                  </span>
-                  {failedMessage ? (
-                    <span className="text-center font-poppins text-sm mt-7 text-red300">
-                      {failedMessage}
-                    </span>
-                  ) : (
-                    <span className="text-center font-poppins text-sm mt-7 text-neutral">
-                      {actionList.length > 1 && t("dontMove")}
-                    </span>
-                  )}
-                </div>
-              </>
-            )}
-          </div>
-        )}
         {isGenerateAction ? (
           <div className="w-2/5 h-[5px] mx-auto mt-5 border-b-2 border-[#E6E6E6] "></div>
         ) : (
@@ -629,6 +630,13 @@ const Liveness = () => {
           setModal={setUnsupportedDeviceModal}
         />
       </div>
+      </div>
+    </div>
+    <div className="footer-bar">
+      <h4>This is Footer</h4>
+    </div>
+  </div>
+      
     </>
   );
 };
