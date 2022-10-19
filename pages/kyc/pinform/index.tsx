@@ -90,7 +90,7 @@ const PinFormDedicatedChannel = (props: Props) => {
             if (redirect_url) {
               const params = {
                 register_id: registration_id,
-                status: "F",
+                status: "S",
               };
               const queryString = new URLSearchParams(params as any).toString();
               window.top!.location.href = concateRedirectUrlParams(
