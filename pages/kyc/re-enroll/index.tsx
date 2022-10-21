@@ -1,4 +1,4 @@
-import EnrollCamera, { IdeviceState } from "@/components/EnrollCamera";
+import Camera from "@/components/Camera";
 import Footer from "@/components/Footer";
 import ProgressStepBar from "@/components/ProgressStepBar";
 import Head from "next/head";
@@ -36,10 +36,6 @@ const ReEnrollMekari = () => {
   const [isStepDone, setStepDone] = useState<boolean>(false);
   const [isGenerateAction, setIsGenerateAction] = useState<boolean>(true);
   const [isMustReload, setIsMustReload] = useState<boolean>(false);
-  const [unsupportedDeviceModal, setUnsupportedDeviceModal] =
-    useState<boolean>(false);
-  const [showUnsupportedDeviceModal, setShowUnsupportedDeviceModal] =
-    useState<IdeviceState | null>(null);
 
   const actionList = useSelector(
     (state: RootState) => state.liveness.actionList
@@ -279,22 +275,9 @@ const ReEnrollMekari = () => {
   }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (ready && showUnsupportedDeviceModal !== null) {
-      if (
-        !showUnsupportedDeviceModal.isDeviceSupportCamera ||
-        showUnsupportedDeviceModal.cameraDevicePermission !== "granted"
-      ) {
-        setUnsupportedDeviceModal(true);
-      } else {
-        setUnsupportedDeviceModal(false);
-      }
-    }
-  }, [showUnsupportedDeviceModal, ready]);
-
-  useEffect(() => {
     setTimeout(() => {
       if (!ready) setIsMustReload(true);
-    }, 15000);
+    }, 25000);
   }, []);
 
   return (
@@ -376,13 +359,76 @@ const ReEnrollMekari = () => {
                 "Liveness"
               )}
             </h2>
-            <span className="font-poppins text-sm mt-5 block">
-              {isGenerateAction ? (
-                <SkeletonLoading width="w-full" isDouble />
-              ) : (
-                subtitle
-              )}
-            </span>
+            {(!isStepDone && actionList.length > 1) || isMustReload ? (
+              <div className="flex gap-5 mx-2 mt-5" >
+                <div className="mt-1">
+                  {!isGenerateAction && (
+                    <Image
+                      src={`${assetPrefix}/images/${
+                        !isStepDone ? "hadap-depan" : currentIndex
+                      }.svg`}
+                      width={50}
+                      height={50}
+                      alt="1"
+                      layout="fixed"
+                    />
+                  )}
+                </div>
+                <div className="flex flex-col">
+                  <span
+                    className={`font-poppins w-full font-medium`}
+                  >
+                    {t("lookStraight")}
+                  </span>
+                  <span
+                    id={isMustReload ? "" : "log"}
+                    className="font-poppins text-sm w-full text-neutral"
+                  >
+                    {t("dontMove")}
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <div>
+                {isGenerateAction && (
+                    <div className="flex gap-5 mx-2 mt-5" >
+                    <SkeletonLoading width="w-[60px]" height="h-[50px]" />
+                  <div className="flex items-center w-full flex-col">
+                    <SkeletonLoading width="w-full" height="h-[20px]" isDouble />
+                  </div>
+                </div>
+                )}
+                {!isLoading && (
+                  <div className="flex gap-5 mx-2 mt-5" >
+                    <div className="mt-1">
+                      {actionList.length === 2 && (
+                        <Image
+                          src={`${assetPrefix}/images/${currentIndex}.svg`}
+                          width={50}
+                          height={50}
+                          alt="2"
+                          layout="fixed"
+                        />
+                      )}
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="font-poppins font-medium">
+                        {actionText(actionList[currentActionIndex])}
+                      </span>
+                      {failedMessage ? (
+                        <span className="font-poppins text-sm text-red300">
+                          {failedMessage}
+                        </span>
+                      ) : (
+                        <span className="font-poppins text-sm text-neutral">
+                          {actionList.length > 1 && t("dontMove")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <div
               className={[
                 "mt-5 rounded-md h-[350px] flex justify-center items-center sm:w-full md:w-full",
@@ -417,83 +463,15 @@ const ReEnrollMekari = () => {
                   </div>
                 </div>
               )}
-              <EnrollCamera
-                currentActionIndex={currentActionIndex}
-                setCurrentActionIndex={setCurrentActionIndex}
-                currentStep="Liveness Detection"
-                setFailedMessage={setFailedMessage}
-                setProgress={setProgress}
-                setHumanReady={setHumanReady}
-                deviceState={(state) => {
-                  setShowUnsupportedDeviceModal(state);
-                }}
-              />
+                <Camera
+                  currentActionIndex={currentActionIndex}
+                  setCurrentActionIndex={setCurrentActionIndex}
+                  currentStep="Liveness Detection"
+                  setFailedMessage={setFailedMessage}
+                  setProgress={setProgress}
+                  setHumanReady={setHumanReady}
+          />
             </div>
-            {(!isStepDone && actionList.length > 1) || isMustReload ? (
-              <>
-                <div className="mt-5 flex justify-center">
-                  {!isGenerateAction && (
-                    <Image
-                      src={`${assetPrefix}/images/${
-                        !isStepDone ? "hadap-depan" : currentIndex
-                      }.svg`}
-                      width={50}
-                      height={50}
-                      alt="1"
-                    />
-                  )}
-                </div>
-                <div className="flex items-center justify-center mt-5 flex-col">
-                  <span
-                    className={`font-poppins w-full text-center font-medium`}
-                  >
-                    {t("lookStraight")}
-                  </span>
-                  <span
-                    id={isMustReload ? "" : "log"}
-                    className="text-center font-poppins text-sm w-full mt-7 text-neutral"
-                  >
-                    {t("dontMove")}
-                  </span>
-                </div>
-              </>
-            ) : (
-              <div>
-                {isGenerateAction && (
-                  <div className="flex items-center justify-center mt-14 flex-col">
-                    <SkeletonLoading width="w-full" isDouble />
-                  </div>
-                )}
-                {!isLoading && (
-                  <>
-                    <div className="mt-5 flex justify-center">
-                      {actionList.length === 2 && (
-                        <Image
-                          src={`${assetPrefix}/images/${currentIndex}.svg`}
-                          width={50}
-                          height={50}
-                          alt="2"
-                        />
-                      )}
-                    </div>
-                    <div className="flex items-center justify-center mt-5 flex-col">
-                      <span className="font-poppins font-medium">
-                        {actionText(actionList[currentActionIndex])}
-                      </span>
-                      {failedMessage ? (
-                        <span className="text-center font-poppins text-sm mt-7 text-red300">
-                          {failedMessage}
-                        </span>
-                      ) : (
-                        <span className="text-center font-poppins text-sm mt-7 text-neutral">
-                          {actionList.length > 1 && t("dontMove")}
-                        </span>
-                      )}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
             {isGenerateAction ? (
               <div className="w-2/5 h-[5px] mx-auto mt-10 border-b-2 border-[#E6E6E6] "></div>
             ) : (
@@ -512,10 +490,7 @@ const ReEnrollMekari = () => {
               </div>
             )}
             <Footer />
-            <UnsupportedDeviceModal
-              modal={unsupportedDeviceModal}
-              setModal={setUnsupportedDeviceModal}
-            />
+            <UnsupportedDeviceModal />
           </div>
         </>
       )}

@@ -76,14 +76,14 @@ const Login = () => {
               const data = JSON.parse(res.data);
               if(data.typeMfa == null) {
                 router.replace({
-                  pathname: handleRoute("/setting-signature-and-mfa"),
+                  pathname: handleRoute("setting-signature-and-mfa"),
                   query: {
                     ...queryWithDynamicRedirectURL,
                   },
                 });
               } else {
                 router.replace({
-                  pathname: handleRoute("/signing"),
+                  pathname: handleRoute("signing"),
                   query: {
                     ...queryWithDynamicRedirectURL,
                   },
@@ -98,7 +98,7 @@ const Login = () => {
             setCertifModal(true);
           } else {
             router.replace({
-              pathname: handleRoute("/certificate-information"),
+              pathname: handleRoute("certificate-information"),
               query: {
                 ...queryWithDynamicRedirectURL,
               },

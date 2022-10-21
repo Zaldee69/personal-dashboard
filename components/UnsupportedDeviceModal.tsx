@@ -4,12 +4,9 @@ import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
 import { toast } from "react-toastify";
 
-interface IModal {
-  modal: boolean;
-  setModal: Dispatch<SetStateAction<boolean>>;
-}
+interface Props {}
 
-const UnsupportedDeviceModal: React.FC<IModal> = ({ modal, setModal }) => {
+const UnsupportedDeviceModal: React.FC<Props> = () => {
   const { t }: any = i18n;
   const copyLink = () => {
     var copyText = document.getElementById("inputLink") as HTMLInputElement;
@@ -25,10 +22,11 @@ const UnsupportedDeviceModal: React.FC<IModal> = ({ modal, setModal }) => {
       });
   };
   const getCurrentURL = (): string => window.location.href;
-  return modal ? (
+  return (
     <div
+      id="unsupportedDevice"
       style={{ backgroundColor: "rgba(0, 0, 0, .5)", zIndex: "999" }}
-      className="fixed z-50 flex items-start transition-all duration-1000 pb-3 justify-center w-full left-0 top-0 h-full"
+      className="fixed z-50  items-start transition-all hidden duration-1000 pb-3 justify-center w-full left-0 top-0 h-full"
     >
       <div
         className="bg-white mt-20 pt-6 px-3.5 pb-9 rounded-xl w-full mx-5"
@@ -73,7 +71,7 @@ const UnsupportedDeviceModal: React.FC<IModal> = ({ modal, setModal }) => {
         </div>
       </div>
     </div>
-  ) : null;
+  )
 };
 
 export default UnsupportedDeviceModal;

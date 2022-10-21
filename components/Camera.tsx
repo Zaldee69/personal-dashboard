@@ -26,10 +26,6 @@ let isDone: any;
 let human: any = undefined;
 let count: number = 1;
 
-export interface IdeviceState {
-  isDeviceSupportCamera: boolean;
-  cameraDevicePermission: TcameraDevicePermission;
-}
 
 interface Constraint {
   width: number;
@@ -45,10 +41,7 @@ interface Props {
   setFailedMessage: Dispatch<SetStateAction<string>>;
   isGenerateAction: boolean
   setHumanReady: () => void;
-  deviceState?: (state: IdeviceState) => void;
 }
-
-type TcameraDevicePermission = PermissionState | null;
 
 const Camera: React.FC<Props> = ({
   currentStep,
@@ -57,8 +50,6 @@ const Camera: React.FC<Props> = ({
   setFailedMessage,
   setProgress,
   setHumanReady,
-  deviceState,
-  isGenerateAction
 }) => {
   const constraints: Constraint = {
     width: 1280,
@@ -78,9 +69,6 @@ const Camera: React.FC<Props> = ({
   const [currentActionState, setCurrentActionState] = useState("look_straight");
   const [isCurrentStepDone, setIsCurrentStepDone] = useState(false);
   const [successState, setIsSuccessState] = useState(false);
-  const [isDeviceSupportCamera, setIsDeviceSupportCamera] = useState(false);
-  const [cameraDevicePermission, setCameraDevicePermission] =
-    useState<TcameraDevicePermission>(null);
   const [error, setError] = useState<boolean>(false);
   const [image, setImage] = useState("");
   const [percent, setPercent] = useState<number>(0);
@@ -141,10 +129,6 @@ const Camera: React.FC<Props> = ({
       };
       import("@vladmandic/human/dist/human.esm.js").then((H) => {
         human = new H.default(humanConfig);
-        human.load().then(() => {
-          detectionLoop()
-          setHumanReady();
-        });
       });
     };
     initHuman();
@@ -157,10 +141,10 @@ const Camera: React.FC<Props> = ({
   }, []);
 
   useEffect(() => {
-    if (deviceState !== undefined) {
-      deviceState({ isDeviceSupportCamera, cameraDevicePermission });
-    }
-  }, [isDeviceSupportCamera, cameraDevicePermission]); // eslint-disable-line react-hooks/exhaustive-deps
+    return () => {
+      _isMounted.current = false;
+    };
+  });
 
   async function detectionLoop() {
     // main detection loop
@@ -172,6 +156,7 @@ const Camera: React.FC<Props> = ({
 
   async function drawLoop() {
     // main screen refresh loop
+    if(actionList[currentActionIndex] !==  undefined) setHumanReady(); 
     let clicked = false;
     if (result) {
       const interpolated = await human.next(result);
@@ -347,36 +332,30 @@ const Camera: React.FC<Props> = ({
 
       if (videoInputs.length === 0) {
         setIsSuccessState(false);
-        setIsDeviceSupportCamera(false);
-        setCameraDevicePermission(null);
       } else {
         dom = {
           // grab instances of dom objects so we dont have to look them up later
           video: webcamRef.current?.video,
           canvas: null,
         };
-  
+        const unsupport : any = document.getElementById("unsupportedDevice")
         requestMediaPermissions({audio: false, video: true})
         .then(() => {
-          setIsDeviceSupportCamera(true);
-          setCameraDevicePermission("granted");
+          unsupport.style.display = "none"
         })
         .catch((err: MediaPermissionsError) => {
           const { type } = err;
-            if (type === MediaPermissionsErrorType.SystemPermissionDenied
-                || type === MediaPermissionsErrorType.UserPermissionDenied
-                ||type === MediaPermissionsErrorType.CouldNotStartVideoSource
-                ) {
+          if (type === MediaPermissionsErrorType.SystemPermissionDenied
+            || type === MediaPermissionsErrorType.UserPermissionDenied
+            ||type === MediaPermissionsErrorType.CouldNotStartVideoSource
+            ) {
+                  unsupport.style.display = "flex"
                   setIsSuccessState(false);
-                  setIsDeviceSupportCamera(false);
-                  setCameraDevicePermission(null);
             } 
         });
       }
     } catch (_) {
       setIsSuccessState(false);
-      setIsDeviceSupportCamera(false);
-      setCameraDevicePermission(null);
     }
   };
 
@@ -437,6 +416,37 @@ const Camera: React.FC<Props> = ({
   }, [isGenerateAction])
 
   return (
+    <>
+      {
+        _isMounted && (
+          <div className="relative">
+          <Webcam
+            style={{ height: "270px", objectFit: "cover" }}
+            className="mt-3 rounded-md sm:w-full md:w-full"
+            screenshotQuality={1}
+            audio={false}
+            ref={webcamRef}
+            height={720}
+            screenshotFormat="image/jpeg"
+            width={1280}
+            minScreenshotWidth={1280}
+            mirrored={false}
+            minScreenshotHeight={720}
+            onLoadedMetadata={(e) => onPlay()}
+            videoConstraints={constraints}
+          />
+          <div className={`circle-container`}>
+            <CircularProgressBar percent={percent} error={error} />
+          </div>
+          <button
+            ref={captureButtonRef}
+            onClick={(e) => capture(e)}
+            style={{ display: "none" }}
+          ></button>
+        </div>
+        )
+      }
+    </>
     <div className="relative">
       <Webcam
         style={{ height: "300px", objectFit: "cover" }}

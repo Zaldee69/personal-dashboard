@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
 import { AppDispatch, RootState } from "@/redux/app/store";
-import Camera, { IdeviceState } from "../../components/Camera";
+import Camera from "../../components/Camera";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import {
@@ -42,10 +42,6 @@ const Liveness = () => {
   const [isStepDone, setStepDone] = useState<boolean>(false);
   const [isGenerateAction, setIsGenerateAction] = useState<boolean>(true);
   const [isMustReload, setIsMustReload] = useState<boolean>(false);
-  const [unsupportedDeviceModal, setUnsupportedDeviceModal] =
-    useState<boolean>(false);
-  const [showUnsupportedDeviceModal, setShowUnsupportedDeviceModal] =
-    useState<IdeviceState | null>(null);
 
   const actionList = useSelector(
     (state: RootState) => state.liveness.actionList
@@ -100,7 +96,6 @@ const Liveness = () => {
   }, [progress]);
 
   const dispatch: AppDispatch = useDispatch();
-  const humanReadyRef = useRef<null>(null);
 
   const setHumanReady = () => {
     ready = true;
@@ -467,19 +462,6 @@ const Liveness = () => {
   }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (ready && showUnsupportedDeviceModal !== null) {
-      if (
-        !showUnsupportedDeviceModal.isDeviceSupportCamera ||
-        showUnsupportedDeviceModal.cameraDevicePermission !== "granted"
-      ) {
-        setUnsupportedDeviceModal(true);
-      } else {
-        setUnsupportedDeviceModal(false);
-      }
-    }
-  }, [showUnsupportedDeviceModal, ready]);
-
-  useEffect(() => {
     setTimeout(() => {
       if (!ready) setIsMustReload(true);
     }, 25000);
@@ -487,14 +469,7 @@ const Liveness = () => {
 
   return (
     <>
-        <div className="wrapper">
-    <div className="header-bar">
-      <h4>This is Header</h4>
-    </div>
-    <div className="content">
-      <div className="content-internal"></div>
-      <div className="content-external">
-        <Head>
+      <Head>
         <title>Liveness</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
@@ -507,7 +482,7 @@ const Liveness = () => {
             <div className="mt-1">
               {!isGenerateAction && (
                 <Image
-                  src={`/images/${
+                  src={`${assetPrefix}/images/${
                     !isStepDone ? "hadap-depan" : currentIndex
                   }.svg`}
                   width={50}
@@ -518,7 +493,7 @@ const Liveness = () => {
               )}
             </div>
             <div className="flex items-center justify-center flex-col">
-              <span className={`font-poppins w-full  font-medium`}>
+              <span className={`font-poppins w-full font-medium`}>
                 {t("lookStraight")}
               </span>
               <span
@@ -532,16 +507,19 @@ const Liveness = () => {
         ) : (
           <div>
             {isGenerateAction && (
-              <div className="flex items-center justify-center mt-14 flex-col">
-                <SkeletonLoading width="w-full" isDouble />
-              </div>
+               <div className="flex gap-5 mx-2 mt-5" >
+               <SkeletonLoading width="w-[60px]" height="h-[50px]" />
+             <div className="flex items-center w-full flex-col">
+               <SkeletonLoading width="w-full" height="h-[20px]" isDouble />
+             </div>
+           </div>
             )}
             {!isLoading && (
               <div className="flex gap-5 mx-2 mt-5">
                 <div className="mt-1">
                   {actionList.length === 2 && (
                     <Image
-                      src={`/images/${currentIndex}.svg`}
+                      src={`${assetPrefix}/images/${currentIndex}.svg`}
                       width={50}
                       height={50}
                       alt="2"
@@ -568,7 +546,7 @@ const Liveness = () => {
         )}
         <div
           className={[
-            "mt-5 rounded-md h-[300px] flex justify-center items-center sm:w-full md:w-full",
+            "mt-5 rounded-md h-[270px] flex justify-center items-center sm:w-full md:w-full",
             isLoading ? "block" : "hidden",
           ].join(" ")}
         >
@@ -578,14 +556,14 @@ const Liveness = () => {
           {!ready && (
             <div
               id="loading"
-              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[300px] flex justify-center items-center`}
+              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[270px] flex justify-center items-center`}
             >
               <Loading title={t("initializing")} />
             </div>
           )}
           {isMustReload && (
             <div
-              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[300px] flex justify-center items-center`}
+              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[270px] flex justify-center items-center`}
             >
               <div className="text-center text-neutral50 font-poppins">
                 <p>{t("intializingFailed")}</p>
@@ -605,10 +583,6 @@ const Liveness = () => {
             setFailedMessage={setFailedMessage}
             setProgress={setProgress}
             setHumanReady={setHumanReady}
-            isGenerateAction={isGenerateAction}
-            deviceState={(state) => {
-              setShowUnsupportedDeviceModal(state);
-            }}
           />
         </div>
         {isGenerateAction ? (
@@ -626,18 +600,8 @@ const Liveness = () => {
           </div>
         )}
         <Footer />
-        <UnsupportedDeviceModal
-          modal={unsupportedDeviceModal}
-          setModal={setUnsupportedDeviceModal}
-        />
+        <UnsupportedDeviceModal />
       </div>
-      </div>
-    </div>
-    <div className="footer-bar">
-      <h4>This is Footer</h4>
-    </div>
-  </div>
-      
     </>
   );
 };
