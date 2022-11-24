@@ -1304,27 +1304,20 @@ const ViewerModal: React.FC<IModalViewer> = ({ modal, onClose, viewedDoc }) => {
   const [closeButtonShouldDisabled, setCloseButtonShouldDisabled] =
     useState<boolean>(true);
 
-  const handleScroll = (e: any) => {
-    const bottom =
-      e.target.scrollHeight - Math.ceil(e.target.scrollTop) ===
-      e.target.clientHeight;
+  const handleScroll = (e: any) => {                                  
     const scrollDiv: HTMLDivElement | null =
       document.querySelector("#scrollDiv");
 
-    window.requestAnimationFrame(() => {
-      if (bottom) {
+      const scrollTop = Math.round(e.target.scrollTop)
+      const scrollHeight = Math.round(e.target.scrollHeight - e.target.offsetHeight)
+
+      if(scrollTop === scrollHeight || scrollTop - 4 === scrollHeight){
         setCloseButtonShouldDisabled(false);
         if (scrollDiv) {
           scrollDiv.style.borderBottomWidth = "4px";
           scrollDiv.style.borderColor = "#DFE1E6";
         }
-      } else {
-        if (scrollDiv) {
-          scrollDiv.style.borderBottomWidth = "4px";
-          scrollDiv.style.borderColor = "transparent";
-        }
       }
-    });
   };
 
   useEffect(() => {
