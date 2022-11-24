@@ -11,14 +11,13 @@ import lookLeftHandler from "@/utils/lookLeftHandler";
 import lookRightHandler from "@/utils/lookRightHandler";
 import lookUpHandler from "@/utils/lookUpHandler";
 import lookDownHandler from "@/utils/lookDownHandler";
-import {log} from "@/utils/logging";
+import { log } from "@/utils/logging";
 import i18n from "i18";
 
 let result: any;
 let dom: any;
 let isDone: any;
 let count: number = 1;
-
 
 interface Constraint {
   width: number;
@@ -32,10 +31,9 @@ interface Props {
   setProgress: Dispatch<SetStateAction<number>>;
   setCurrentActionIndex: Dispatch<SetStateAction<number>>;
   setFailedMessage: Dispatch<SetStateAction<string>>;
-  isGenerateAction: boolean
   setHumanReady: () => void;
-  humanDone: boolean
-  human: any
+  humanDone: boolean;
+  human: any;
 }
 
 const Camera: React.FC<Props> = ({
@@ -46,10 +44,11 @@ const Camera: React.FC<Props> = ({
   setProgress,
   setHumanReady,
   humanDone,
-  human
+  human,
 }) => {
-  const backend = new URLSearchParams(window.location.search).get('backend')??'wasm';
-  
+  const backend =
+    new URLSearchParams(window.location.search).get("backend") ?? "wasm";
+
   const constraints: Constraint = {
     width: 1280,
     height: 720,
@@ -63,7 +62,7 @@ const Camera: React.FC<Props> = ({
   const actionList = useSelector(
     (state: RootState) => state.liveness.actionList
   );
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   const [currentActionState, setCurrentActionState] = useState("look_straight");
   const [isCurrentStepDone, setIsCurrentStepDone] = useState(false);
@@ -94,7 +93,7 @@ const Camera: React.FC<Props> = ({
     const progressCircle: any = document.querySelector(".progress-circle");
     if (
       currentActionState === "mouth_open" ||
-      currentActionState === "look_straight"  
+      currentActionState === "look_straight"
     ) {
       progressCircle.style.transition = "2s";
     } else {
@@ -103,7 +102,6 @@ const Camera: React.FC<Props> = ({
       }, 2000);
     }
   }, [currentActionState]);
-
 
   useEffect(() => {
     if (_isMounted) {
@@ -116,10 +114,10 @@ const Camera: React.FC<Props> = ({
       _isMounted.current = false;
     };
   });
-  
+
   async function detectionLoop() {
     // main detection loop
-    if (human != undefined && dom != undefined ) {
+    if (human != undefined && dom != undefined) {
       result = await human.detect(dom.video); // actual detection; were not capturing output in a local variable as it can also be reached via human.result
       requestAnimationFrame(detectionLoop); // start new frame immediately
     } else {
@@ -171,7 +169,7 @@ const Camera: React.FC<Props> = ({
               if (yaw > -10 && yaw < 10) {
                 if (pitch > -10 && pitch < 10) {
                   let done = await isIndexDone(currentActionIndex);
-                  log(t("dontMove"))
+                  log(t("dontMove"));
                   if (!done) {
                     await new Promise((resolve) => setTimeout(resolve, 500));
                     await setIndexDone(currentActionIndex);
@@ -182,8 +180,8 @@ const Camera: React.FC<Props> = ({
                 }
               }
             }
-          } else if (distance > 25){
-            log(t("closeYourFace"))
+          } else if (distance > 25) {
+            log(t("closeYourFace"));
           }
         } else if (actionList[currentActionIndex] == "look_left") {
           progressSetter(0);
@@ -278,21 +276,27 @@ const Camera: React.FC<Props> = ({
     if (clicked) {
       setTimeout(drawLoop, 1000); // Wait for click update
     } else {
-      setTimeout(drawLoop, 30)
+      setTimeout(drawLoop, 30);
     }
   }
 
   async function actionDone() {
-    if (humanDone && (actionList[currentActionIndex] !== undefined)) {
+    if (humanDone && actionList[currentActionIndex] !== undefined) {
       const dt = new Date();
-      const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
-      console.log(ts, "Human ready")
-      setHumanReady()
+      const ts = `${dt.getHours().toString().padStart(2, "0")}:${dt
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}:${dt.getSeconds().toString().padStart(2, "0")}.${dt
+        .getMilliseconds()
+        .toString()
+        .padStart(3, "0")}`;
+      console.log(ts, "Human ready");
+      setHumanReady();
       detectionLoop();
       drawLoop();
     }
   }
-  
+
   useEffect(() => {
     actionDone();
   }, [humanDone, actionList]);
@@ -381,15 +385,10 @@ const Camera: React.FC<Props> = ({
     }, 1500);
   }, []);
 
-  useEffect(() => {
-    if(!isGenerateAction) onPlay()
-  }, [isGenerateAction])
-
   return (
     <>
-      {
-        _isMounted && (
-          <div className="relative">
+      {_isMounted && (
+        <div className="relative">
           <Webcam
             style={{ height: "270px", objectFit: "cover" }}
             className="mt-3 rounded-md sm:w-full md:w-full"
@@ -419,44 +418,8 @@ const Camera: React.FC<Props> = ({
             style={{ display: "none" }}
           ></button>
         </div>
-        )
-      }
+      )}
     </>
-    <div className="relative">
-      <Webcam
-        style={{ height: "300px", objectFit: "cover" }}
-        className="mt-5 rounded-md sm:w-full md:w-full"
-        screenshotQuality={1}
-        audio={false}
-        ref={webcamRef}
-        height={720}
-        screenshotFormat="image/jpeg"
-        width={1280}
-        minScreenshotWidth={1280}
-        mirrored={false}
-        minScreenshotHeight={720}
-        onLoadedMetadata={(e) => {
-          onPlay();
-
-          // We assume the PermissionStatus state is granted.
-          // Because metadata is loaded only when permission is granted.
-          // This is for handling browser that not support PermissionStatus change event.
-          if (cameraDevicePermission !== "granted") {
-            console.log("we assume the PermissionStatus state is granted");
-            setCameraDevicePermission("granted");
-          }
-        }}
-        videoConstraints={constraints}
-      />
-      <div className={`circle-container`}>
-        <CircularProgressBar percent={percent} error={error} />
-      </div>
-      <button
-        ref={captureButtonRef}
-        onClick={(e) => capture(e)}
-        style={{ display: "none" }}
-      ></button>
-    </div>
   );
 };
 
