@@ -32,7 +32,6 @@ interface Props {
   setProgress: Dispatch<SetStateAction<number>>;
   setCurrentActionIndex: Dispatch<SetStateAction<number>>;
   setFailedMessage: Dispatch<SetStateAction<string>>;
-  isGenerateAction: boolean
   setHumanReady: () => void;
   humanDone: boolean
   human: any
@@ -381,10 +380,6 @@ const Camera: React.FC<Props> = ({
     }, 1500);
   }, []);
 
-  useEffect(() => {
-    if(!isGenerateAction) onPlay()
-  }, [isGenerateAction])
-
   return (
     <>
       {
@@ -422,41 +417,6 @@ const Camera: React.FC<Props> = ({
         )
       }
     </>
-    <div className="relative">
-      <Webcam
-        style={{ height: "300px", objectFit: "cover" }}
-        className="mt-5 rounded-md sm:w-full md:w-full"
-        screenshotQuality={1}
-        audio={false}
-        ref={webcamRef}
-        height={720}
-        screenshotFormat="image/jpeg"
-        width={1280}
-        minScreenshotWidth={1280}
-        mirrored={false}
-        minScreenshotHeight={720}
-        onLoadedMetadata={(e) => {
-          onPlay();
-
-          // We assume the PermissionStatus state is granted.
-          // Because metadata is loaded only when permission is granted.
-          // This is for handling browser that not support PermissionStatus change event.
-          if (cameraDevicePermission !== "granted") {
-            console.log("we assume the PermissionStatus state is granted");
-            setCameraDevicePermission("granted");
-          }
-        }}
-        videoConstraints={constraints}
-      />
-      <div className={`circle-container`}>
-        <CircularProgressBar percent={percent} error={error} />
-      </div>
-      <button
-        ref={captureButtonRef}
-        onClick={(e) => capture(e)}
-        style={{ display: "none" }}
-      ></button>
-    </div>
   );
 };
 
