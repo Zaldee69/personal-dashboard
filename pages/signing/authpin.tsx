@@ -2,10 +2,9 @@ import PinFormComponent from "@/components/PinFormComponent";
 import { RestSigningAuthPIN } from "infrastructure";
 import { NextParsedUrlQuery } from "next/dist/server/request-meta";
 import { useRouter } from "next/router";
-import { toast } from "react-toastify";
 import React, { useEffect, useState } from "react";
 import { concateRedirectUrlParams } from "@/utils/concateRedirectUrlParams";
-import i18n from "i18"
+import i18n from "i18";
 
 type Props = {};
 
@@ -29,23 +28,28 @@ const AuthPinForm = (props: Props) => {
     isError: boolean;
     message: string;
   }>({ isError: false, message: "" });
-  const [isRequestCheckStatus, setIsRequestCheckStatus] =
+  const [isButtonNumberDisabled, setIsButtonNumberDisabled] =
     useState<boolean>(false);
+  const [isProcessed, setIsProcessed] = useState<boolean>(false);
 
   const digitLength: number = 6;
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   const onClickNumberHandlerCallback = (value: number) => {};
   const onClickDeleteHandlerCallback = () => {
     setPinError({ isError: false, message: "" });
   };
   const submitFormCallback = (pin: string) => {
+    setIsButtonNumberDisabled(true);
+    setIsProcessed(true);
+
     setPin(pin);
     RestSigningAuthPIN({
       payload: {
         user: user || "",
         pin,
         id: id || "",
+        async: router.query.async as string
       },
     })
       .then((res) => {
@@ -54,7 +58,6 @@ const AuthPinForm = (props: Props) => {
             isError: false,
             message: res?.message || "penandatanganan dokumen berhasil",
           });
-          setIsRequestCheckStatus(false);
           if (redirect_url) {
             const params = {
               user_identifier: user,
@@ -66,6 +69,9 @@ const AuthPinForm = (props: Props) => {
               redirect_url as string,
               queryString
             );
+          } else {
+            setIsButtonNumberDisabled(false);
+            setIsProcessed(false);
           }
         } else {
           setPinError({
@@ -89,6 +95,9 @@ const AuthPinForm = (props: Props) => {
                 queryString
               );
             }, 2000);
+          } else {
+            setIsButtonNumberDisabled(false);
+            setIsProcessed(false);
           }
         }
       })
@@ -104,6 +113,8 @@ const AuthPinForm = (props: Props) => {
             message: err.response?.data?.message || t("authPinError2"),
           });
         }
+        setIsButtonNumberDisabled(false);
+        setIsProcessed(false);
       });
   };
 
@@ -115,7 +126,7 @@ const AuthPinForm = (props: Props) => {
         isError: true,
         message: "user atau id dibutuhkan",
       });
-      setIsRequestCheckStatus(true);
+      setIsButtonNumberDisabled(true);
     }
   }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -136,7 +147,8 @@ const AuthPinForm = (props: Props) => {
           isResetAfterSubmit
           isErrorAfterSubmit={pinError.isError}
           isErrorAfterSubmitMessage={pinError.message}
-          isButtonNumberDisabled={isRequestCheckStatus}
+          isButtonNumberDisabled={isButtonNumberDisabled}
+          isProcessed={isProcessed}
           showPoweredByTilaka
         />
       </div>

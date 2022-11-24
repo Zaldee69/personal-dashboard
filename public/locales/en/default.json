@@ -135,7 +135,11 @@
   "failed": "failed",
   "success": "Success",
   "documentExpired": "Document Expired",
-  "closeYourFace": "Move your face closer"
-
-
+  "closeYourFace": "Move your face closer",
+  "authenticationSuccessTitle": "Authentication Success",
+  "authenticationSuccessSubtitle": "Signing is currently in process.\n Notification will be received when document(s)\nare succesfully signed.",
+  "singingReadDocCheckbox": "I have read the document above",
+  "singingAgreeDocCheckbox": "I agree to sign the above document",
+  "dindtReceiveOtp": "Din't receive OTP?",
+  "resend": "Resend"
 }

@@ -19,6 +19,7 @@ interface IPropsPinFormComponent {
   isButtonNumberDisabled?: boolean;
   isError?: boolean;
   isErrorMessage?: string;
+  isProcessed?: boolean;
   cancelLink?: {
     show?: boolean;
     title?: string;
@@ -137,26 +138,45 @@ const PinFormComponent = (props: IPropsPinFormComponent): JSX.Element => {
           {props.subTitle}
         </p>
       )}
-      <div className="flex items-center justify-center mt-8">
-        {digitArr.map((e, i) => (
-          <div
-            key={i}
-            className={[
-              "bullet-pin-form",
-              e
-                ? shouldShowErrorAfterSubmit
-                  ? "bg-red300"
-                  : "bg-primary"
-                : "bg-neutral30",
-            ].join(" ")}
-          ></div>
-        ))}
+      <div className="mt-8">
+        <div
+          className={[
+            "text-center animate-spin",
+            props.isProcessed ? "block" : "hidden",
+          ].join(" ")}
+        >
+          <Image
+            src={`${assetPrefix}/images/loader.svg`}
+            width="30px"
+            height="30px"
+            alt="loader"
+          />
+        </div>
+        <div className={[props.isProcessed ? "hidden" : "block"].join(" ")}>
+          <div className="flex items-center justify-center">
+            {digitArr.map((e, i) => (
+              <div
+                key={i}
+                className={[
+                  "bullet-pin-form",
+                  e
+                    ? shouldShowErrorAfterSubmit
+                      ? "bg-red300"
+                      : "bg-primary"
+                    : "bg-neutral30",
+                ].join(" ")}
+              ></div>
+            ))}
+          </div>
+        </div>
+        {/* <div className={[props.isProcessed ? "hidden" : "block"].join(" ")}> */}
+        {props.isError && (
+          <p className="text-red300 text-xs mt-3 text-center font-poppins">
+            {props.isErrorMessage || "checkstep error"}
+          </p>
+        )}
+        {/* </div> */}
       </div>
-      {props.isError && (
-        <p className="text-red300 text-xs mt-3 text-center font-poppins">
-          {props.isErrorMessage || "checkstep error"}
-        </p>
-      )}
       {shouldShowErrorAfterSubmit && (
         <p className="text-red300 text-xs mt-3 text-center font-poppins">
           {props.isErrorAfterSubmitMessage || "there is something wrong"}
@@ -176,7 +196,11 @@ const PinFormComponent = (props: IPropsPinFormComponent): JSX.Element => {
               </button>
               {i === 8 && <button className="btn-pin-form-invisible"></button>}
               {i === 9 && (
-                <button className="btn-pin-form" onClick={onClickDeleteHandler}>
+                <button
+                  className="btn-pin-form"
+                  onClick={onClickDeleteHandler}
+                  disabled={props.isButtonNumberDisabled && props.isProcessed}
+                >
                   <DeleteIcon />
                 </button>
               )}

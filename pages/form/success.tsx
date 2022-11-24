@@ -17,7 +17,7 @@ const FormSuccess = (props: Props) => {
   const {t} : any = i18n
   return (
     <div className="px-10 pt-16 pb-9 text-center">
-      <p className="font-poppins text-base font-semibold text-neutral800">
+      <p className="text-base poppins-semibold text-neutral800">
         {t("livenessSuccessTitle")}
       </p>
       <div className="mt-20">
@@ -29,11 +29,11 @@ const FormSuccess = (props: Props) => {
         />
       </div>
       <div className="mt-14">
-        <p className="font-poppins text-xs text-neutral200">
+        <p className="poppins-regular text-xs text-neutral200">
           {t("livenessSuccessSubtitle")}
         </p>
       </div>
-      <div className="mt-20 text-primary text-base font-medium font-poppins underline hover:cursor-pointer">
+      <div className="mt-20 text-primary text-base poppins-medium underline hover:cursor-pointer">
         {routerQuery.redirect_url && (
           <a
             href={concateRedirectUrlParams(

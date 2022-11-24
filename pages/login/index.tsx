@@ -42,7 +42,7 @@ const Login = () => {
   const dispatch: AppDispatch = useDispatch();
   const data = useSelector((state: RootState) => state.login);
   const router = useRouter();
-  const { channel_id, tilaka_name, company_id, transaction_id } = router.query;
+  const { channel_id, tilaka_name, company_id, transaction_id, signing } = router.query;
 
   useEffect(() => {
     if (router.isReady) {
@@ -62,7 +62,7 @@ const Login = () => {
       localStorage.setItem("refresh_token", data.data.data[1] as string);
       getCertificateList({ params: company_id as string }).then((res) => {
         const certif = JSON.parse(res.data);
-        if (!transaction_id) {
+        if (!transaction_id && signing === "1") {
           toast.dismiss("success");
           toast("Transaction ID tidak boleh kosong", {
             type: "error",
@@ -117,7 +117,7 @@ const Login = () => {
 
   const submitHandler = (e: React.SyntheticEvent) => {
     e.preventDefault();
-    dispatch(login({ password, ...router.query } as TLoginProps));
+    dispatch(login({ password, channel_id, tilaka_name, company_id, transaction_id,} as TLoginProps));
     setPassword("");
   };
 
@@ -137,17 +137,17 @@ const Login = () => {
       </Head>
       <div className="px-5 pt-8 max-w-screen-sm sm:w-full md:w-4/5 mx-auto">
         <div className="flex flex-col gap-5 mt-10 items-center">
-          <div className="h-14 w-14 font-semibold flex  text-xl items-center justify-center name text-white bg-[#64bac3] rounded-full">
+          <div className="h-14 w-14 poppins-semibold flex text-xl items-center justify-center name text-white bg-[#64bac3] rounded-full">
             {tilakaName?.[0]?.toUpperCase()}
           </div>
-          <span className="font-bold text-xl text-[#172b4d] font-poppins">
+          <span className="font-bold text-xl text-[#172b4d] poppins-regular">
             {t("hi")}, {tilaka_name}
           </span>
         </div>
         <form onSubmit={submitHandler}>
           <div className="flex flex-col  mt-20">
             <label
-              className="font-poppins px-2 text-label font-light"
+              className="poppins-regular px-2 text-label font-light"
               htmlFor="password"
             >
               {t("passwordLabel")}
@@ -159,7 +159,7 @@ const Login = () => {
                 name="password"
                 type={type.password}
                 placeholder={t("passwordPlaceholder")}
-                className={`font-poppins py-3 focus:outline-none border-borderColor focus:ring  placeholder:text-placeholder placeholder:font-light px-2 rounded-md border w-full`}
+                className={`poppins-regular py-3 focus:outline-none border-borderColor focus:ring  placeholder:text-placeholder placeholder:font-light px-2 rounded-md border w-full`}
               />
               <button
                 type="button"
@@ -170,7 +170,7 @@ const Login = () => {
               </button>
             </div>
             <a
-              className="m-5 text-center font-poppins text-primary"
+              className="m-5 text-center poppins-regular text-primary"
               target="_blank"
               rel="noopener noreferrer"
               href={`${process.env.NEXT_PUBLIC_PORTAL_URL}/public/reset-pass-req.xhtml`}
@@ -181,7 +181,7 @@ const Login = () => {
           <button
             type="submit"
             disabled={password.length < 1}
-            className="bg-primary uppercase disabled:opacity-50 mt-32 text-xl md:mx-auto md:block md:w-1/4 text-white font-poppins w-full mx-auto rounded-sm h-11"
+            className="bg-primary uppercase disabled:opacity-50 mt-32 text-xl md:mx-auto md:block md:w-1/4 text-white poppins-regular w-full mx-auto rounded-sm h-11"
           >
             {t("loginCTA")}
           </button>

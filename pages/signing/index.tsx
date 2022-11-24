@@ -132,7 +132,7 @@ const Signing = () => {
                     ? setopenFRModal(true)
                     : setOtpModal(true)
                 }
-                className="bg-primary uppercase btn  md:w-1/4 my-5 text-white font-poppins w-full mx-5 rounded-sm h-9"
+                className="bg-primary uppercase btn  md:w-1/4 my-5 text-white poppins-regular w-full mx-5 rounded-sm h-9"
               >
                 {t("sign")}
               </button>
@@ -196,7 +196,7 @@ const Configuration: React.FC<{
             height={25}
             src={`${assetPrefix}/images/goresan.svg`}
           />
-          <p className="text-[#727272] text-base font-poppins ">{t("signatureOption1")}</p>
+          <p className="text-[#727272] text-base poppins-regular ">{t("signatureOption1")}</p>
         </button>
       </div>
       <div className="flex flex-col">
@@ -206,7 +206,7 @@ const Configuration: React.FC<{
             height={25}
             src={`${assetPrefix}/images/font.svg`}
           />
-          <p className="text-[#727272] text-base font-poppins ">Font</p>
+          <p className="text-[#727272] text-base poppins-regular ">Font</p>
         </button>
       </div>
     </div>
@@ -235,7 +235,7 @@ export const FRModal: React.FC<Active | any> = ({ modal, setModal }) => {
       <div className="bg-white max-w-md mt-20 pt-5 px-2 pb-3 rounded-md w-full mx-5 ">
         {isFRSuccess ? (
           <div className="flex flex-col  items-center">
-            <p className="font-poppins block text-center  whitespace-nowrap  font-semibold ">
+            <p className="poppins-regular block text-center  whitespace-nowrap  font-semibold ">
               {t("signSuccess")}
             </p>
             <div className="my-10">
@@ -259,23 +259,23 @@ export const FRModal: React.FC<Active | any> = ({ modal, setModal }) => {
                   );
                 }
               }}
-              className="bg-primary btn uppercase text-white font-poppins w-full mt-5 mx-auto rounded-sm h-9"
+              className="bg-primary btn uppercase text-white poppins-regular w-full mt-5 mx-auto rounded-sm h-9"
             >
               {t("close")}
             </button>
           </div>
         ) : (
           <>
-            <p className="font-poppins block text-center font-semibold ">
+            <p className="poppins-regular block text-center font-semibold ">
               {t("frTitle")}
             </p>
-            <span className="font-poppins mt-2 block text-center text-sm font-normal">
+            <span className="poppins-regular mt-2 block text-center text-sm font-normal">
               {t("frSubtitle1")}
             </span>
             <FRCamera setModal={setModal} setIsFRSuccess={setIsFRSuccess} />
             <button
               onClick={() => setModal(!modal)}
-              className="bg-primary btn uppercase text-white font-poppins w-full mt-5 mx-auto rounded-sm h-9"
+              className="bg-primary btn uppercase text-white poppins-regular w-full mt-5 mx-auto rounded-sm h-9"
             >
               {t("cancel")}
             </button>
@@ -309,7 +309,7 @@ const ChooseFontModal: React.FC<Active> = ({ modal, setModal, tilakaName }) => {
       className="fixed z-50 flex items-start transition-all duration-1000 justify-center w-full left-0 top-0 h-full "
     >
       <div className="bg-white max-w-md mt-20 pt-5 px-2 pb-3 rounded-md w-full mx-2">
-        <p className="font-poppins block text-center  whitespace-nowrap  font-semibold ">
+        <p className="poppins-regular block text-center  whitespace-nowrap  font-semibold ">
           {t("chooseFont")}
         </p>
         <div className="mt-5 flex flex-col gap-5">
@@ -405,13 +405,13 @@ const ChooseFontModal: React.FC<Active> = ({ modal, setModal, tilakaName }) => {
             setModal(!modal);
             convertToDataURL();
           }}
-          className="bg-primary btn uppercase text-white font-poppins w-full mt-5 mx-auto rounded-sm h-9"
+          className="bg-primary btn uppercase text-white poppins-regular w-full mt-5 mx-auto rounded-sm h-9"
         >
           {t("save")}
         </button>
         <button
           onClick={() => setModal(!modal)}
-          className="  text-[#97A0AF] uppercase font-poppins w-full  mx-auto rounded-sm h-9"
+          className="  text-[#97A0AF] uppercase poppins-regular w-full  mx-auto rounded-sm h-9"
         >
           {t("cancel")}
         </button>
@@ -437,7 +437,7 @@ const ChooseScratchModal: React.FC<Active> = ({ modal, setModal }) => {
       className="fixed z-50 flex items-start transition-all duration-1000 justify-center w-full left-0 top-0 h-full "
     >
       <div className="bg-white max-w-md mt-20 pt-5 px-2 pb-3 rounded-md w-full mx-2">
-        <p className="font-poppins block text-center  whitespace-nowrap  font-semibold ">
+        <p className="poppins-regular block text-center  whitespace-nowrap  font-semibold ">
           {t("signatureOption1")}
         </p>
         <SignaturePad sigPad={sigPad} />
@@ -446,13 +446,13 @@ const ChooseScratchModal: React.FC<Active> = ({ modal, setModal }) => {
             setModal(!modal);
             onClickHandler(e);
           }}
-          className="bg-primary btn  text-white font-poppins w-full mt-5 mx-auto rounded-sm h-9"
+          className="bg-primary btn  text-white poppins-regular w-full mt-5 mx-auto rounded-sm h-9"
         >
           {t("save")}
         </button>
         <button
           onClick={() => setModal(!modal)}
-          className="  text-[#97A0AF]  font-poppins w-full mt-3  mx-auto rounded-sm h-9"
+          className="  text-[#97A0AF]  poppins-regular w-full mt-3  mx-auto rounded-sm h-9"
         >
           {t("cancel")}
         </button>
@@ -465,6 +465,8 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
   const [successSigning, setSuccessSigning] = useState<boolean>(false);
   const document = useSelector((state: RootState) => state.document);
   const signature = useSelector((state: RootState) => state.signature);
+  const [timeRemaining, setTimeRemaining] = useState<string>("0")
+  const [isCountDone, setIsCountDone] = useState<boolean>(false)
   const router = useRouter();
   const { transaction_id, request_id, ...restRouterQuery } = router.query;
 
@@ -472,22 +474,59 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
 
   const {t}: any = i18n
 
-  useEffect(() => {
-    if (modal && !successSigning) {
-      restGetOtp({})
-        .then((res) => {
-          toast(`Kode OTP telah dikirim ke Email anda`, {
-            type: "info",
-            toastId: "info",
-            isLoading: false,
-            position: "top-center",
+  const interval = 60000;
+
+  const reset = () => {
+    localStorage.endTime = +new Date() + interval;
+  };
+
+  const timerHandler = () => {
+    setInterval(function () {
+      const date: any = new Date();
+      const remaining = localStorage.endTime - date;
+      const timeRemaining = Math.floor( remaining / 1000 ).toString()
+      if (remaining >= 1) {
+          setTimeRemaining(timeRemaining)
+      } else {
+          setIsCountDone(false)
+      }
+    }, 100);
+  };
+
+  const handleTriggerSendOTP = () => {
+    restGetOtp({})
+          .then((res) => {
+            if(res.success){
+              toast(`Kode OTP telah dikirim ke Email anda`, {
+                type: "info",
+                toastId: "info",
+                isLoading: false,
+                position: "top-center",
+              });
+              timerHandler()
+              reset()
+              setIsCountDone(true)
+            }else {
+              toast.error(res.message, { icon: <XIcon /> });
+            }
+          })
+          .catch(() => {
+            toast.error("Kode OTP gagal dikirim", { icon: <XIcon /> });
           });
-        })
-        .catch(() => {
-          toast.error("Kode OTP gagal dikirim", { icon: <XIcon /> });
-        });
+  }
+
+  useEffect(() => {
+    if (modal && !successSigning && !isCountDone && timeRemaining === "0") {
+      handleTriggerSendOTP()
+    } else {
+      setIsCountDone(true)
+      timerHandler()
     }
   }, [modal]);
+  
+  const setEndTimeToZero = () => {
+    localStorage.endTime = "0";
+  };
 
   const onClickHandler = () => {
     toast(`Loading...`, {
@@ -519,6 +558,7 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
       },
     })
       .then((res) => {
+        setEndTimeToZero()
         setSuccessSigning(true);
         toast.dismiss("loading");
         localStorage.setItem("count", "0");
@@ -538,6 +578,7 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
           localStorage.setItem("count", newCount.toString());
           const count = parseInt(localStorage.getItem("count") as string);
           if (count >= 5) {
+            setEndTimeToZero()
             localStorage.removeItem("token");
             localStorage.setItem("count", "0");
             restLogout({});
@@ -558,7 +599,7 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
       <div className="bg-white max-w-md mt-20 pt-5 px-2 pb-3 rounded-md w-full mx-5">
         {successSigning ? (
           <div className="flex flex-col  items-center">
-            <p className="font-poppins block text-center  whitespace-nowrap  font-semibold ">
+            <p className="poppins-regular block text-center  whitespace-nowrap  font-semibold ">
               {t('signSuccess')}
             </p>
             <div className="my-10">
@@ -566,6 +607,7 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
                 width={150}
                 height={150}
                 src={`${assetPrefix}/images/successFR.svg`}
+                alt="fr"
               />
             </div>
 
@@ -581,17 +623,17 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
                   );
                 }
               }}
-              className="bg-primary btn uppercase text-white font-poppins w-full mt-5 mx-auto rounded-sm h-9"
+              className="bg-primary btn uppercase text-white poppins-regular w-full mt-5 mx-auto rounded-sm h-9"
             >
               {t("close")}
             </button>
           </div>
         ) : (
           <>
-            <p className="font-poppins block text-center pb-5  whitespace-nowrap  font-semibold ">
-              {t("signatureOption1")}
+            <p className="poppins-regular block text-center pb-5  whitespace-nowrap  font-semibold ">
+              {t("frTitle")}
             </p>
-            <span className="font-poppins block text-center pb-5  ">
+            <span className="poppins-regular block text-center pb-5  ">
               {t("frSubtitle2")}
             </span>
             <PinInput
@@ -607,10 +649,14 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
               values={values}
               onChange={(value, index, values) => setValues(values)}
             />
+            <div className="flex poppins-regular justify-center text-sm gap-1 mt-5" >
+              <p className="text-neutral200" >{t("dindtReceiveOtp")}</p>
+              <div className="text-primary font-semibold">{!isCountDone ? <button onClick={handleTriggerSendOTP} >{t("resend")}</button> : `0:${timeRemaining}`}</div>
+            </div>
             <button
               disabled={values.join("").length < 6}
               onClick={onClickHandler}
-              className="bg-primary btn uppercase mt-16 disabled:opacity-50 text-white font-poppins w-full mx-auto rounded-sm h-9"
+              className="bg-primary disabled:bg-[#DAE6F8] btn mt-16 disabled:text-[#6B778C]/30 mx-auto flex text-white poppins-regular rounded-sm py-2.5 px-6 font-semibold"
             >
               {t("confirm")}
             </button>
@@ -619,9 +665,9 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
                 setValues(["", "", "", "", "", ""]);
                 setModal(!modal);
               }}
-              className="uppercase text-[#97A0AF]  font-poppins w-full mt-4  mx-auto rounded-sm h-9"
+              className="text-primary poppins-regular mt-4 hover:opacity-50 w-full mx-auto rounded-sm h-9 font-semibold"
             >
-              {t("close")}
+              {t("cancel")}
             </button>
           </>
         )}

@@ -28,7 +28,6 @@ export const restSigning = ({
       throw err;
     });
 };
-
 export const RestSigningAuthPIN = ({
   payload,
   token,
@@ -36,9 +35,10 @@ export const RestSigningAuthPIN = ({
   payload: TSigningAuthPINRequestData;
   token?: string | null;
 }): Promise<TSigningAuthPINResponseData> => {
+  const isAsync = payload.async === "true" 
   return axios
     .post<TSigningAuthPINResponseData>(
-      `${BASE_URL}/signing-authpin`,
+     `${BASE_URL}/${isAsync ? "v2/" : ""}signing-authpin`,
       {
         pin: payload.pin,
         otp_pin: payload.otp_pin,

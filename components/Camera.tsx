@@ -2,7 +2,6 @@ import Webcam from "react-webcam";
 import React, { Dispatch, SetStateAction } from "react";
 import { useRef, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { assetPrefix } from "../next.config";
 import { AppDispatch, RootState } from "@/redux/app/store";
 import CircularProgressBar from "./CircularProgressBar";
 import { setImages, setIsDone } from "@/redux/slices/livenessSlice";
@@ -14,16 +13,10 @@ import lookUpHandler from "@/utils/lookUpHandler";
 import lookDownHandler from "@/utils/lookDownHandler";
 import {log} from "@/utils/logging";
 import i18n from "i18";
-import {
-  MediaPermissionsError,
-  MediaPermissionsErrorType,
-  requestMediaPermissions,
-} from 'mic-check';
 
 let result: any;
 let dom: any;
 let isDone: any;
-let human: any = undefined;
 let count: number = 1;
 
 
@@ -41,6 +34,8 @@ interface Props {
   setFailedMessage: Dispatch<SetStateAction<string>>;
   isGenerateAction: boolean
   setHumanReady: () => void;
+  humanDone: boolean
+  human: any
 }
 
 const Camera: React.FC<Props> = ({
@@ -50,7 +45,11 @@ const Camera: React.FC<Props> = ({
   setFailedMessage,
   setProgress,
   setHumanReady,
+  humanDone,
+  human
 }) => {
+  const backend = new URLSearchParams(window.location.search).get('backend')??'wasm';
+  
   const constraints: Constraint = {
     width: 1280,
     height: 720,
@@ -95,7 +94,7 @@ const Camera: React.FC<Props> = ({
     const progressCircle: any = document.querySelector(".progress-circle");
     if (
       currentActionState === "mouth_open" ||
-      currentActionState === "look_straight"
+      currentActionState === "look_straight"  
     ) {
       progressCircle.style.transition = "2s";
     } else {
@@ -105,34 +104,6 @@ const Camera: React.FC<Props> = ({
     }
   }, [currentActionState]);
 
-  useEffect(() => {
-    const initHuman = async () => {
-      const humanConfig = {
-        // user configuration for human, used to fine-tune behavior
-        // backend: 'webgl',
-        async: true,
-        modelBasePath: assetPrefix ? `${assetPrefix}/models` : "/models",
-        filter: { enabled: false, equalization: false },
-        face: {
-          enabled: true,
-          detector: { rotation: true },
-          mesh: { enabled: true },
-          iris: { enabled: true },
-          description: { enabled: true },
-          emotion: { enabled: false },
-        },
-        body: { enabled: false },
-        hand: { enabled: false },
-        object: { enabled: false },
-        gesture: { enabled: true },
-        debug: false,
-      };
-      import("@vladmandic/human/dist/human.esm.js").then((H) => {
-        human = new H.default(humanConfig);
-      });
-    };
-    initHuman();
-  }, []);
 
   useEffect(() => {
     if (_isMounted) {
@@ -145,18 +116,19 @@ const Camera: React.FC<Props> = ({
       _isMounted.current = false;
     };
   });
-
+  
   async function detectionLoop() {
     // main detection loop
-    if (human != undefined) {
+    if (human != undefined && dom != undefined ) {
       result = await human.detect(dom.video); // actual detection; were not capturing output in a local variable as it can also be reached via human.result
       requestAnimationFrame(detectionLoop); // start new frame immediately
+    } else {
+      setTimeout(detectionLoop, 30);
     }
   }
 
   async function drawLoop() {
     // main screen refresh loop
-    if(actionList[currentActionIndex] !==  undefined) setHumanReady(); 
     let clicked = false;
     if (result) {
       const interpolated = await human.next(result);
@@ -306,17 +278,30 @@ const Camera: React.FC<Props> = ({
     if (clicked) {
       setTimeout(drawLoop, 1000); // Wait for click update
     } else {
-      setTimeout(drawLoop, 30); // use to slow down refresh from max refresh rate to target of 30 fps
+      setTimeout(drawLoop, 30)
     }
   }
+
+  async function actionDone() {
+    if (humanDone && (actionList[currentActionIndex] !== undefined)) {
+      const dt = new Date();
+      const ts = `${dt.getHours().toString().padStart(2, '0')}:${dt.getMinutes().toString().padStart(2, '0')}:${dt.getSeconds().toString().padStart(2, '0')}.${dt.getMilliseconds().toString().padStart(3, '0')}`;
+      console.log(ts, "Human ready")
+      setHumanReady()
+      detectionLoop();
+      drawLoop();
+    }
+  }
+  
+  useEffect(() => {
+    actionDone();
+  }, [humanDone, actionList]);
 
   const onPlay = async () => {
     isDone = new Array(actionList.length);
     for (var i = 0; i < actionList.length; i++) {
       isDone[i] = false;
     }
-    await detectionLoop();
-    await drawLoop();
     setIsSuccessState(false);
   };
 
@@ -338,21 +323,6 @@ const Camera: React.FC<Props> = ({
           video: webcamRef.current?.video,
           canvas: null,
         };
-        const unsupport : any = document.getElementById("unsupportedDevice")
-        requestMediaPermissions({audio: false, video: true})
-        .then(() => {
-          unsupport.style.display = "none"
-        })
-        .catch((err: MediaPermissionsError) => {
-          const { type } = err;
-          if (type === MediaPermissionsErrorType.SystemPermissionDenied
-            || type === MediaPermissionsErrorType.UserPermissionDenied
-            ||type === MediaPermissionsErrorType.CouldNotStartVideoSource
-            ) {
-                  unsupport.style.display = "flex"
-                  setIsSuccessState(false);
-            } 
-        });
       }
     } catch (_) {
       setIsSuccessState(false);
@@ -434,6 +404,11 @@ const Camera: React.FC<Props> = ({
             minScreenshotHeight={720}
             onLoadedMetadata={(e) => onPlay()}
             videoConstraints={constraints}
+            onUserMediaError={() => {
+              const unsupport: any =
+                document.getElementById("unsupportedDevice");
+              unsupport.style.display = "flex";
+            }}
           />
           <div className={`circle-container`}>
             <CircularProgressBar percent={percent} error={error} />

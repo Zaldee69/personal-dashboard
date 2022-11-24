@@ -21,7 +21,7 @@ const LivenessFail = () => {
   const [gagalCounter, setGagalCounter] = useState(0);
   const dispatch: AppDispatch = useDispatch();
 
-  const {t} : any = i18n
+  const { t }: any = i18n;
 
   const resetStorage = () => {
     setGagalCounter(0);
@@ -38,10 +38,10 @@ const LivenessFail = () => {
   };
 
   const setPathName = (routerQuery: any) => {
-    if(routerQuery.revoke_id) return handleRoute('/kyc/revoke')
-    if(routerQuery.issue_id) return handleRoute('/kyc/re-enroll')
-    return handleRoute("/guide")
-  }
+    if (routerQuery.revoke_id) return handleRoute("kyc/revoke");
+    if (routerQuery.issue_id) return handleRoute("kyc/re-enroll");
+    return handleRoute("guide");
+  };
 
   useEffect(() => {
     if (gagalCounter > 2) localStorage.removeItem("tlk-counter");
@@ -59,7 +59,7 @@ const LivenessFail = () => {
       return (
         <span
           onClick={resetStorage}
-          className="cursor-pointer text-center font-semibold font-poppins underline-offset-1	underline  text-primary"
+          className="cursor-pointer text-center poppins-semibold underline-offset-1	underline  text-primary"
         >
           {t("livenessSuccessButtonTitle")}
         </span>
@@ -72,8 +72,8 @@ const LivenessFail = () => {
             query: { ...router.query },
           }}
         >
-          <button className="bg-primary btn md:mx-auto md:block md:w-1/4 text-white font-poppins w-full mx-auto rounded-sm h-9">
-          {t("livenessFailedButtonTitle")}
+          <button className="bg-primary btn md:mx-auto md:block md:w-1/4 text-white poppins-regular w-full mx-auto rounded-sm h-9">
+            {t("livenessFailedButtonTitle")}
           </button>
         </Link>
       );
@@ -87,8 +87,8 @@ const LivenessFail = () => {
       </Head>
       <div className="px-5 pt-8 sm:w-full md:w-4/5 mx-auto">
         <div className="flex flex-col gap-20 items-center justify-center">
-          <h1 className="text-center font-poppins text-xl font-semibold">
-          {t("livenessFailedTitle")}
+          <h1 className="text-center poppins-semibold text-xl">
+            {t("livenessFailedTitle")}
           </h1>
           <Image
             src={`${assetPrefix}/images/livenessFail.svg`}
@@ -96,7 +96,7 @@ const LivenessFail = () => {
             height={200}
           />
           <div className="flex flex-col gap-10 ">
-            <span className="text-center font-poppins text-neutral ">
+            <span className="text-center poppins-regular text-neutral ">
               {gagalCounter > 2
                 ? t("livenessFailed3xSubtitle")
                 : t("livenessFailedSubtitle")}

@@ -135,5 +135,11 @@
   "failed": "gagal",
   "success": "sukses",
   "documentExpired": "Dokumen Kedaluwarsa",
-  "closeYourFace": "Dekatkan wajah Anda"
+  "closeYourFace": "Dekatkan wajah Anda",
+  "authenticationSuccessTitle": "Otentikasi Berhasil",
+  "authenticationSuccessSubtitle": "Tanda tangan sedang dalam proses.\nNotifikasi akan diterima saat tanda tangan berhasil.",
+  "singingReadDocCheckbox": "Saya telah membaca dokumen di atas",
+  "singingAgreeDocCheckbox": "Saya setuju untuk menandatangani dokumen di atas",
+  "dindtReceiveOtp": "Tidak Menerima OTP?",
+  "resend": "Kirim Ulang"
 }

@@ -110,7 +110,7 @@ function CertificateInformation({}: Props) {
       });
   };
   return (
-    <div className="bg-white p-4 font-poppins">
+    <div className="bg-white p-4 poppins-regular">
       <div className="flex justify-center">
         <img src="images/certInfo.svg" alt="ill" />
       </div>

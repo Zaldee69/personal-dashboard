@@ -34,7 +34,7 @@ const LivenessFailure = () => {
       </Head>
       <div className="px-5 pt-8 sm:w-full md:w-4/5 mx-auto">
         <div className="flex flex-col gap-20 items-center justify-center">
-          <h1 className="text-center text-neutral800 font-poppins text-xl font-semibold">
+          <h1 className="text-center text-neutral800 poppins-semibold text-xl">
             {t("livenessFailedTitle")}
           </h1>
           <Image
@@ -43,7 +43,7 @@ const LivenessFailure = () => {
             height={200}
           />
           <div className="flex flex-col items-center gap-10 ">
-            <p className="text-center font-poppins  text-neutral">
+            <p className="text-center poppins-regular text-neutral">
               {t("livenessFailed3xSubtitle")}
             </p>
             {routerQuery.redirect_url && (
@@ -53,7 +53,7 @@ const LivenessFailure = () => {
                   queryString
                 )}
               >
-                <span className="text-center font-semibold font-poppins underline-offset-1	underline  text-primary">
+                <span className="text-center poppins-semibold underline-offset-1	underline  text-primary">
                   {t("livenessSuccessButtonTitle")}
                 </span>
               </a>

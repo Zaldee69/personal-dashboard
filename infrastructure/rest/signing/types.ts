@@ -26,6 +26,7 @@ export interface TSigningAuthPINRequestData {
   pin?: string;
   otp_pin?: string;
   face_image?: string;
+  async?: string;
   user: string;
   id: string;
 }

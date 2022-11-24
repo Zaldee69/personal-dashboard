@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Head from "next/head";
@@ -15,21 +14,31 @@ import {
 import { TKycVerificationRequestData } from "../../infrastructure/rest/kyc/types";
 import XIcon from "@/public/icons/XIcon";
 import CheckOvalIcon from "@/public/icons/CheckOvalIcon";
-
 import Footer from "../../components/Footer";
 import ProgressStepBar from "../../components/ProgressStepBar";
 import { resetImages, setActionList } from "@/redux/slices/livenessSlice";
 import { handleRoute } from "@/utils/handleRoute";
-import { assetPrefix } from "../../next.config";
 import Loading from "@/components/Loading";
 import SkeletonLoading from "@/components/SkeletonLoading";
 import { concateRedirectUrlParams } from "@/utils/concateRedirectUrlParams";
 import i18n from "i18";
 import UnsupportedDeviceModal from "@/components/UnsupportedDeviceModal";
+import Guide from "@/components/Guide";
+import InitializingFailed from "@/components/atoms/InitializingFailed";
+import Initializing from "@/components/atoms/Initializing";
+import { ActionGuide1, ActionGuide2 } from "@/components/atoms/ActionGuide";
+import { actionText } from "@/utils/actionText";
+import { assetPrefix } from "next.config";
 
-let ready: boolean = false;
-type TQueryParams = { request_id: string, redirect_url?: string }
+type TQueryParams = {
+  request_id?: string;
+  redirect_url?: string;
+  reason_code?: string;
+  register_id?: string;
+  status?: string;
+};
 
+let human: any = undefined;
 
 const Liveness = () => {
   const router = useRouter();
@@ -42,6 +51,10 @@ const Liveness = () => {
   const [isStepDone, setStepDone] = useState<boolean>(false);
   const [isGenerateAction, setIsGenerateAction] = useState<boolean>(true);
   const [isMustReload, setIsMustReload] = useState<boolean>(false);
+  const [isLivenessStarted, setIsLivenessStarted] = useState<boolean>(false);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
+  const [humanDone, setHumanDone] = useState(false);
+  const [isClicked, setIsClicked] = useState<boolean>(false);
 
   const actionList = useSelector(
     (state: RootState) => state.liveness.actionList
@@ -59,31 +72,6 @@ const Liveness = () => {
       ? "pejam"
       : "hadap-depan";
 
-  const actionText = () => {
-    switch (actionList[currentActionIndex]) {
-      case "look_straight":
-        return t("lookStraight");
-      case "look_up":
-        return "Wajah menghadap ke  atas";
-      case "look_down":
-        return "Wajah menghadap ke bawah";
-      case "look_left":
-        return "Wajah menghadap ke kiri";
-      case "look_right":
-        return "Wajah menghadap ke kanan";
-      case "mouth_open":
-        return t("openMouth");
-      case "blink":
-        return t("blink");
-      default:
-        return "";
-    }
-  };
-
-  const subtitle = isLoading
-    ? t("livenessVerificationSubtitle")
-    : t("livenessSubtitle");
-
   useEffect(() => {
     const track: any = document.querySelector(".track");
     if (progress === 100) {
@@ -98,7 +86,6 @@ const Liveness = () => {
   const dispatch: AppDispatch = useDispatch();
 
   const setHumanReady = () => {
-    ready = true;
     const loading: any = document.getElementById("loading");
     if (loading) {
       loading.style.display = "none";
@@ -106,6 +93,7 @@ const Liveness = () => {
   };
 
   const generateAction = () => {
+    setIsDisabled(true);
     const body = {
       registerId: routerQuery.request_id as string,
     };
@@ -126,12 +114,18 @@ const Liveness = () => {
           res.data.status !== "E"
         ) {
           // this scope for status A B C S
+          setIsDisabled(false);
           if (res.data.status === "S") {
             toast.dismiss("generateAction");
-            const params = {
-              register_id: routerQuery.request_id,
+            const params: TQueryParams = {
+              register_id: routerQuery.request_id as string,
               status: res.data.status,
             };
+
+            if (res.data.reason_code) {
+              params.reason_code = res.data.reason_code;
+            }
+
             const queryString = new URLSearchParams(params as any).toString();
             if (routerQuery.redirect_url) {
               window.top!.location.href = concateRedirectUrlParams(
@@ -228,19 +222,35 @@ const Liveness = () => {
               res.data.pin_form &&
               routerQuery.redirect_url
             ) {
-              const params = {
+              const params: TQueryParams = {
                 status: res.data.status,
-                register_id: routerQuery.request_id,
+                register_id: routerQuery.request_id as string,
               };
+
+              if (res.data.reason_code) {
+                params.reason_code = res.data.reason_code;
+              }
+
               const queryString = new URLSearchParams(params as any).toString();
               window.top!.location.href = concateRedirectUrlParams(
                 routerQuery.redirect_url as string,
                 queryString
               );
             } else {
+              console.log("first");
+
+              const query: TQueryParams = {
+                ...routerQuery,
+                request_id: router.query.request_id as string,
+              };
+
+              if (res.data.reason_code) {
+                query.reason_code = res.data.reason_code;
+              }
+
               router.push({
                 pathname: handleRoute("liveness-failure"),
-                query: { ...routerQuery, request_id: router.query.request_id },
+                query,
               });
             }
           }
@@ -294,33 +304,41 @@ const Liveness = () => {
       const status = result.data.status;
       if (result.success) {
         removeStorage();
-        if(result.data.config_level === 2){
+        if (result.data.config_level === 2) {
           try {
             const finalFormResponse = await RestKycFinalForm({
               payload: { registerId: router.query.request_id as string },
-            })
+            });
 
             if (finalFormResponse.success) {
               toast.success(finalFormResponse?.message || "berhasil", {
                 icon: <CheckOvalIcon />,
               });
-              
+
               // Redirect berdasarkan redirect-url
               const params: TQueryParams = {
                 request_id: routerQuery.request_id as string,
+              };
+
+              if (routerQuery.redirect_url) {
+                params.redirect_url = routerQuery.redirect_url as string;
               }
-              if(routerQuery.redirect_url){
-                params.redirect_url = routerQuery.redirect_url as string
+
+              if (finalFormResponse.data.reason_code) {
+                params.reason_code = finalFormResponse.data.reason_code;
               }
+
               const queryString = new URLSearchParams(params as any).toString();
               window.top!.location.href = concateRedirectUrlParams(
                 routerQuery.dashboard_url as string,
                 queryString
-              )
+              );
             } else {
-              toast.error(finalFormResponse?.message || "gagal", { icon: <XIcon /> });
+              toast.error(finalFormResponse?.message || "gagal", {
+                icon: <XIcon />,
+              });
             }
-          } catch(e: any){
+          } catch (e: any) {
             if (e.response?.data?.data?.errors?.[0]) {
               toast.error(
                 `${e.response?.data?.message}, ${e.response?.data?.data?.errors?.[0]}`,
@@ -332,16 +350,33 @@ const Liveness = () => {
               });
             }
           }
-        }
-        else if (result.data.pin_form) {
+        } else if (result.data.pin_form) {
+          const query: any = {
+            ...routerQuery,
+            registration_id: router.query.request_id,
+          };
+
+          if (result.data.reason_code) {
+            query.reason_code = result.data.reason_code;
+          }
+
           router.replace({
             pathname: handleRoute("kyc/pinform"),
-            query: { ...routerQuery, registration_id: router.query.request_id },
+            query,
           });
         } else {
+          const query: any = {
+            ...routerQuery,
+            request_id: router.query.request_id,
+          };
+
+          if (result.data.reason_code) {
+            query.reason_code = result.data.reason_code;
+          }
+
           router.push({
             pathname: handleRoute("form"),
-            query: { ...routerQuery, request_id: router.query.request_id },
+            query,
           });
         }
       } else {
@@ -350,15 +385,26 @@ const Liveness = () => {
           parseInt(localStorage.getItem("tlk-counter") as string) + 1;
         localStorage.setItem("tlk-counter", attempt.toString());
         if (status !== "E" && status !== "F") {
-          setIsLoading(false);
           toast("Liveness Detection failed. Please try again", {
             type: "error",
             autoClose: 5000,
             position: "top-center",
           });
+
+          console.log("ususu");
+
+          const query: TQueryParams = {
+            ...routerQuery,
+            request_id: router.query.request_id as string,
+          };
+
+          if (result.data.reason_code) {
+            query.reason_code = result.data.reason_code;
+          }
+
           router.push({
             pathname: handleRoute("liveness-fail"),
-            query: { ...routerQuery, request_id: router.query.request_id },
+            query,
           });
         } else {
           if (status) {
@@ -386,24 +432,36 @@ const Liveness = () => {
                 }
               );
               setTimeout(() => {
-                if(result.data.config_level === 2){
+                if (result.data.config_level === 2) {
                   const params: TQueryParams = {
                     request_id: routerQuery.request_id as string,
+                  };
+
+                  if (routerQuery.redirect_url) {
+                    params.redirect_url = routerQuery.redirect_url as string;
                   }
-                  if(routerQuery.redirect_url){
-                    params.redirect_url = routerQuery.redirect_url as string
+
+                  if (result?.data.reason_code) {
+                    params.reason_code = result?.data.reason_code as string;
                   }
-                  const queryString = new URLSearchParams(params as any).toString();
+
+                  const queryString = new URLSearchParams(
+                    params as any
+                  ).toString();
                   window.top!.location.href = concateRedirectUrlParams(
                     routerQuery.dashboard_url as string,
                     queryString
-                  )
-                }
-                else if (result.data.pin_form && routerQuery.redirect_url) {
-                  const params = {
+                  );
+                } else if (result.data.pin_form && routerQuery.redirect_url) {
+                  const params: any = {
                     status: status,
                     register_id: routerQuery.request_id,
                   };
+
+                  if (result?.data.reason_code) {
+                    params.reason_code = result?.data.reason_code;
+                  }
+
                   const queryString = new URLSearchParams(
                     params as any
                   ).toString();
@@ -412,12 +470,18 @@ const Liveness = () => {
                     queryString
                   );
                 } else {
+                  const query: any = {
+                    ...routerQuery,
+                    request_id: router.query.request_id,
+                  };
+
+                  if (result?.data.reason_code) {
+                    query.reason_code = result?.data.reason_code;
+                  }
+
                   router.push({
                     pathname: handleRoute("liveness-fail"),
-                    query: {
-                      ...routerQuery,
-                      request_id: router.query.request_id,
-                    },
+                    query,
                   });
                 }
               }, 5000);
@@ -439,7 +503,10 @@ const Liveness = () => {
       setTimeout(() => {
         router.push({
           pathname: handleRoute("liveness-fail"),
-          query: { ...routerQuery, request_id: router.query.request_id },
+          query: {
+            ...routerQuery,
+            request_id: router.query.request_id,
+          },
         });
       }, 5000);
     }
@@ -451,9 +518,56 @@ const Liveness = () => {
   };
 
   useEffect(() => {
+    const initHuman = async () => {
+      const humanConfig: any = {
+        // user configuration for human, used to fine-tune behavior
+        backend: "webgl",
+        modelBasePath: assetPrefix ? `${assetPrefix}/models` : "/models",
+        filter: { enabled: false, equalization: false },
+        face: {
+          enabled: true,
+          detector: { rotation: true },
+          mesh: { enabled: true },
+          iris: { enabled: true },
+          description: { enabled: true },
+          emotion: { enabled: false },
+        },
+        body: { enabled: false },
+        hand: { enabled: false },
+        object: { enabled: false },
+        gesture: { enabled: true },
+        debug: true,
+      };
+      import("@vladmandic/human").then((H) => {
+        human = new H.default(humanConfig);
+        human.warmup().then(() => {
+          setHumanDone(true);
+        });
+      });
+    };
+    initHuman();
+  }, []);
+
+  useEffect(() => {
     if (!isDone) return;
     changePage();
   }, [isDone]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    if (!humanDone && isClicked) {
+      toast.dismiss();
+      toast(`Loading...`, {
+        type: "info",
+        toastId: "load",
+        isLoading: true,
+        position: "top-center",
+      });
+      setIsDisabled(true);
+    } else if (humanDone && isClicked) {
+      toast.dismiss("load");
+      setIsLivenessStarted(true);
+    }
+  }, [isClicked, humanDone]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!router.isReady) return;
@@ -461,11 +575,8 @@ const Liveness = () => {
     dispatch(resetImages());
   }, [router.isReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(() => {
-    setTimeout(() => {
-      if (!ready) setIsMustReload(true);
-    }, 25000);
-  }, []);
+  if (!isLivenessStarted)
+    return <Guide setIsClicked={setIsClicked} isDisabled={isDisabled} />;
 
   return (
     <>
@@ -478,69 +589,30 @@ const Liveness = () => {
           {isGenerateAction ? <SkeletonLoading width="w-2/5" /> : "Liveness"}
         </h2>
         {(!isStepDone && actionList.length > 1) || isMustReload ? (
-          <div className="flex gap-5 mx-2 mt-5" >
-            <div className="mt-1">
-              {!isGenerateAction && (
-                <Image
-                  src={`${assetPrefix}/images/${
-                    !isStepDone ? "hadap-depan" : currentIndex
-                  }.svg`}
-                  width={50}
-                  height={50}
-                  alt="1"
-                  layout="fixed"
-                />
-              )}
-            </div>
-            <div className="flex items-center justify-center flex-col">
-              <span className={`font-poppins w-full font-medium`}>
-                {t("lookStraight")}
-              </span>
-              <span
-                id={isMustReload ? "" : "log"}
-                className=" font-poppins text-sm w-full  text-neutral"
-              >
-                {t("dontMove")}
-              </span>
-            </div>
-          </div>
+          <ActionGuide2
+            currentIndex={currentIndex}
+            isGenerateAction={isGenerateAction}
+            isStepDone={isStepDone}
+            isMustReload={isMustReload}
+          />
         ) : (
           <div>
             {isGenerateAction && (
-               <div className="flex gap-5 mx-2 mt-5" >
-               <SkeletonLoading width="w-[60px]" height="h-[50px]" />
-             <div className="flex items-center w-full flex-col">
-               <SkeletonLoading width="w-full" height="h-[20px]" isDouble />
-             </div>
-           </div>
-            )}
-            {!isLoading && (
               <div className="flex gap-5 mx-2 mt-5">
-                <div className="mt-1">
-                  {actionList.length === 2 && (
-                    <Image
-                      src={`${assetPrefix}/images/${currentIndex}.svg`}
-                      width={50}
-                      height={50}
-                      alt="2"
-                    />
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-poppins font-medium">
-                    {actionText()}
-                  </span>
-                  {failedMessage ? (
-                    <span className="font-poppins text-sm text-red300">
-                      {failedMessage}
-                    </span>
-                  ) : (
-                    <span className="font-poppins text-sm text-neutral">
-                      {actionList.length > 1 && t("dontMove")}
-                    </span>
-                  )}
+                <SkeletonLoading width="w-[60px]" height="h-[50px]" />
+                <div className="flex items-center w-full flex-col">
+                  <SkeletonLoading width="w-full" height="h-[20px]" isDouble />
                 </div>
               </div>
+            )}
+            {!isLoading && (
+              <ActionGuide1
+                actionList={actionList}
+                currentIndex={currentIndex}
+                currentActionIndex={currentActionIndex}
+                failedMessage={failedMessage}
+                actionText={actionText}
+              />
             )}
           </div>
         )}
@@ -553,29 +625,7 @@ const Liveness = () => {
           <Loading title={t("loadingTitle")} />
         </div>
         <div className={["relative", isLoading ? "hidden" : "block"].join(" ")}>
-          {!ready && (
-            <div
-              id="loading"
-              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[270px] flex justify-center items-center`}
-            >
-              <Loading title={t("initializing")} />
-            </div>
-          )}
-          {isMustReload && (
-            <div
-              className={`rounded-md z-[999] ease-in duration-300 absolute bg-[#E6E6E6] w-full h-[270px] flex justify-center items-center`}
-            >
-              <div className="text-center text-neutral50 font-poppins">
-                <p>{t("intializingFailed")}</p>
-                <button
-                  className="text-[#000] mt-2"
-                  onClick={() => window.location.reload()}
-                >
-                  {t("clickHere")}
-                </button>
-              </div>
-            </div>
-          )}
+          {!isMustReload ? <Initializing /> : <InitializingFailed />}
           <Camera
             currentActionIndex={currentActionIndex}
             setCurrentActionIndex={setCurrentActionIndex}
@@ -583,6 +633,8 @@ const Liveness = () => {
             setFailedMessage={setFailedMessage}
             setProgress={setProgress}
             setHumanReady={setHumanReady}
+            humanDone={humanDone}
+            human={human}
           />
         </div>
         {isGenerateAction ? (

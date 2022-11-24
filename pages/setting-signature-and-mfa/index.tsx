@@ -209,20 +209,20 @@ function SettingSignatureAndMFA({}: Props) {
         <title>{t("settingSignatureTitle")}</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
-      <div className="bg-white p-4 font-poppins">
-        <h1 className="text-xl font-semibold mt-2">
+      <div className="bg-white p-4">
+        <h1 className="text-xl poppins-semibold mt-2">
           {t("settingSignatureTitle")}
         </h1>
         <form onSubmit={handleFormOnSubmit}>
           <div className="flex justify-center">
             <img src="images/ttdSetting.svg" alt="ill" />
           </div>
-          <p className="text-md text-neutral800">{t("chooseSignature")}</p>
+          <p className="text-md poppins-regular text-neutral800">{t("chooseSignature")}</p>
           <div className="mt-2 rounded-md bg-blue50 py-2 px-4 flex items-start">
             <div className="pt-1">
               <InfoIcon />
             </div>
-            <p className="text-xs text-blue500 ml-4">
+            <p className="text-xs poppins-regular text-blue500 ml-4">
               {t("chooseSignatureInformation")}
             </p>
           </div>
@@ -234,9 +234,9 @@ function SettingSignatureAndMFA({}: Props) {
                 onChange={handleFormOnChange}
                 checked={form.signature_type == 0}
                 type="radio"
-                className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
+                className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 text-_030326">
+              <p className="text-md poppins-regular ml-2.5 text-_030326">
                 {t("signatureOption1")}
               </p>
             </label>
@@ -249,7 +249,7 @@ function SettingSignatureAndMFA({}: Props) {
                 type="radio"
                 className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 text-_030326">
+              <p className="text-md ml-2.5 poppins-regular text-_030326">
                 {t("signatureOption2")}
               </p>
             </label>
@@ -347,14 +347,14 @@ function SettingSignatureAndMFA({}: Props) {
               </label>
             </div>
           </div>
-          <p className="text-md text-neutral800 mt-8">
+          <p className="text-md poppins-regular text-neutral800 mt-8">
             {t("choosetAutheticantionMode")}
           </p>
           <div className="mt-1.5 rounded-md bg-blue50 py-2 px-4 flex items-start">
             <div className="pt-1">
               <InfoIcon />
             </div>
-            <p className="text-xs text-blue500 ml-4">
+            <p className="text-xs poppins-regular text-blue500 ml-4">
               {i18n.language === "en" ? (
                 t("choosetAutheticantionModeInformation")
               ) : (
@@ -376,7 +376,7 @@ function SettingSignatureAndMFA({}: Props) {
                 type="radio"
                 className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 text-_030326">Face Recognition</p>
+              <p className="text-md ml-2.5 poppins-regular text-_030326">Face Recognition</p>
             </label>
             <label className="flex items-center mt-3.5">
               <input
@@ -387,7 +387,7 @@ function SettingSignatureAndMFA({}: Props) {
                 type="radio"
                 className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 text-_030326">OTP via Email</p>
+              <p className="text-md ml-2.5 poppins-regular text-_030326">OTP via Email</p>
             </label>
             <label className="flex items-center mt-3.5">
               <input
@@ -406,14 +406,14 @@ function SettingSignatureAndMFA({}: Props) {
                 type="radio"
                 className="appearance-none disabled:opacity-50 bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 opacity-50 text-_030326">
+              <p className="text-md ml-2.5 poppins-regular opacity-50 text-_030326">
                 {t("autheticantionMode3")}
               </p>
             </label>
           </div>
           <button
             type="submit"
-            className="mt-8 p-3 text-base text-white bg-primary w-full"
+            className="mt-8 p-3 text-base poppins-regular text-white bg-primary w-full"
           >
             {t("next")}
           </button>
@@ -430,7 +430,7 @@ function SettingSignatureAndMFA({}: Props) {
           <div className="absolute bg-black opacity-80 inset-0 z-0"></div>
           <div className="w-full max-w-352px px-3 py-5 relative mx-auto my-auto rounded-xl shadow-lg bg-white ">
             <div className="">
-              <div className="text-center flex-auto justify-center">
+              <div className="text-center poppins-regular flex-auto justify-center">
                 <p className="text-base text-neutral800">
                   Untuk mengirimkan OTP via Ponsel, maka Anda perlu membagikan
                   informasi Nomor Ponsel yang terdaftar di Dana Bagus kepada

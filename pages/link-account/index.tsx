@@ -83,6 +83,7 @@ const LinkAccount = (props: Props) => {
                     pathname: handleRoute("setting-signature-and-mfa"),
                     query: {
                       ...queryWithDynamicRedirectURL,
+                      tilaka_name: form.tilaka_name
                     },
                   });
                 } else {
@@ -101,7 +102,7 @@ const LinkAccount = (props: Props) => {
           } else {
             router.replace({
               pathname: handleRoute("certificate-information"),
-              query: { ...queryWithDynamicRedirectURL },
+              query: { ...queryWithDynamicRedirectURL, tilaka_name: form.tilaka_name },
             });
           }
         });
@@ -131,7 +132,7 @@ const LinkAccount = (props: Props) => {
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
       </Head>
       <div className="px-5 py-9">
-        <p className="font-poppins text-lg font-semibold text-neutral800">
+        <p className="text-lg poppins-semibold text-neutral800">
           {t("linkAccountTitle")}
         </p>
         <div className="flex justify-center mt-6">
@@ -143,17 +144,17 @@ const LinkAccount = (props: Props) => {
           />
         </div>
         {nikRegistered && (
-          <p className="font-poppins text-sm text-neutral800 mt-5">
+          <p className="poppins-regular text-sm text-neutral800 mt-5">
             {t("linkAccountSubtitle")}
           </p>
         )}
         <form onSubmit={handleFormOnSubmit}>
           <label className="block mt-4">
             <div className="flex justify-start items-center">
-              <p className="font-poppins text-sm text-neutral200 pl-2.5">
+              <p className="poppins-regular text-sm text-neutral200 pl-2.5">
                 Tilaka Name
               </p>
-              <div className="tooltip font-poppins">
+              <div className="tooltip poppins-regular">
                 <p className="text-white bg-neutral200 w-3 h-3 flex justify-center items-center text-xs rounded-full ml-1">
                   ?
                 </p>
@@ -169,7 +170,7 @@ const LinkAccount = (props: Props) => {
                 placeholder={t("linkAccountPlaceholder")}
                 value={form.tilaka_name}
                 onChange={handleFormOnChange}
-                className="px-2.5 py-3 w-full focus:outline-none text-sm text-neutral800 font-poppins border border-neutral40 rounded-md"
+                className="px-2.5 py-3 w-full focus:outline-none text-sm text-neutral800 poppins-regular border border-neutral40 rounded-md"
               />
             </div>
           </label>
@@ -186,7 +187,7 @@ const LinkAccount = (props: Props) => {
                 placeholder={t("passwordPlaceholder")}
                 value={form.password}
                 onChange={handleFormOnChange}
-                className="px-2.5 py-3 w-full focus:outline-none text-sm text-neutral800 font-poppins border border-neutral40 rounded-md"
+                className="px-2.5 py-3 w-full focus:outline-none text-sm text-neutral800 poppins-regular border border-neutral40 rounded-md"
               />
               <button
                 onClick={(e) => {
@@ -204,7 +205,7 @@ const LinkAccount = (props: Props) => {
               target="_blank"
               rel="noopener noreferrer"
               href={`${process.env.NEXT_PUBLIC_PORTAL_URL}/public/reset-pass-req.xhtml`}
-              className="font-poppins text-primary text-xs"
+              className="poppins-regular text-primary text-xs"
             >
               {t("linkAccountForgotPasswordButton")}
             </a>
@@ -220,7 +221,7 @@ const LinkAccount = (props: Props) => {
               target="_blank"
               rel="noopener noreferrer"
               href={`${process.env.NEXT_PUBLIC_PORTAL_URL}/public/forgot-tilaka-name.xhtml`}
-              className="font-poppins text-primary text-xs"
+              className="poppins-regular text-primary text-xs"
             >
               {t("linkAccountForgotTilakaName")}
             </a>
@@ -228,7 +229,7 @@ const LinkAccount = (props: Props) => {
           <button
             type="submit"
             disabled={!form.tilaka_name || !form.password}
-            className="mt-16 w-full p-2.5 uppercase text-base disabled:opacity-50 text-white rounded-sm bg-primary"
+            className="mt-16 w-full p-2.5 uppercase text-base poppins-regular disabled:opacity-50 text-white rounded-sm bg-primary"
           >
             {t("linkAccountCTA")}
           </button>

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap");
+/* @import url("https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap"); */
 
 @font-face {
   font-family: Adine-Kirnberg;
@@ -32,6 +32,33 @@
 @font-face {
   font-family: SCRIPTIN;
   src: url("../public/fonts/SCRIPTIN.ttf");
+}
+
+@font-face {
+  font-family: poppins-semibold;
+  src: url("../public/fonts/Poppins-SemiBold.ttf");
+}
+
+@font-face {  
+  font-family: poppins-regular;
+  src: url("../public/fonts/Poppins-Regular.ttf");
+}
+
+@font-face {  
+  font-family: poppins-medium;
+  src: url("../public/fonts/Poppins-Medium.ttf");
+}
+
+.poppins-regular {
+  font-family: poppins-regular;
+}
+
+.poppins-medium {
+  font-family: poppins-medium;
+}
+
+.poppins-semibold {
+  font-family: poppins-semibold;
 }
 
 .font-poppins {

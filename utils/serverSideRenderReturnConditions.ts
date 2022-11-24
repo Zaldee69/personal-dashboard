@@ -102,10 +102,16 @@ export const serverSideRenderReturnConditions = ({
             // kyc_checkstep_token: checkStepResult.res?.data?.token || null,
           },
         };
-      } else if (
-        checkStepResult.res.data.status === "F"
-      ) {
-        const params = { ...cQuery, request_id: uuid };
+      } else if (checkStepResult.res.data.status === "F") {
+        const params: any = {
+          ...cQuery,
+          request_id: uuid,
+        };
+
+        if (checkStepResult.res.data.reason_code) {
+          params.reason_code = checkStepResult.res.data.reason_code;
+        }
+
         const queryString = new URLSearchParams(params as any).toString();
 
         if (
@@ -118,7 +124,13 @@ export const serverSideRenderReturnConditions = ({
               permanent: false,
               destination: concateRedirectUrlParams(
                 cQuery.redirect_url as string,
-                `status=${checkStepResult.res.data.status}%26register_id=${uuid}`
+                `status=${
+                  checkStepResult.res.data.status
+                }%26register_id=${uuid}${
+                  checkStepResult.res.data.reason_code
+                    ? "%26reason_code=" + checkStepResult.res.data.reason_code
+                    : ""
+                }`
               ),
             },
             props: {},
@@ -142,10 +154,15 @@ export const serverSideRenderReturnConditions = ({
           },
         };
       } else if (checkStepResult.res.data.status === "S") {
-        const params = {
+        const params: any = {
           register_id: uuid,
           status: checkStepResult.res.data.status,
         };
+
+        if (checkStepResult.res.data.reason_code) {
+          params.reason_code = checkStepResult.res.data.reason_code;
+        }
+
         const queryString = new URLSearchParams(params as any).toString();
 
         if (cQuery.redirect_url) {

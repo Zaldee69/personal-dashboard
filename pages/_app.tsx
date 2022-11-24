@@ -60,7 +60,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               ] +
               " relative  rounded items-center w-fit px-5 mx-auto mt-5 text-sm overflow-hidden hover:cursor-pointer flex justify-between"
             }
-            bodyClassName={() => "text-sm font-poppins  p-3 flex items-center"}
+            bodyClassName={() => "text-sm poppins-regular  p-3 flex items-center"}
             position="top-center"
             autoClose={3000}
             hideProgressBar={true}

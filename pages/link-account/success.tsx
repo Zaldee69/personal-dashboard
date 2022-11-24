@@ -41,7 +41,7 @@ const LinkAccountSuccess = (props: Props) => {
 
   return (
     <div className="px-10 pt-16 pb-9 text-center">
-      <p className="font-poppins text-base font-semibold text-neutral800">
+      <p className="text-base poppins-semibold text-neutral800">
         {t("linkAccountSuccessTitle")}
       </p>
       <div className="mt-20">
@@ -53,12 +53,12 @@ const LinkAccountSuccess = (props: Props) => {
         />
       </div>
       <div className="mt-14">
-        <p className="font-poppins text-xs text-neutral200">
+        <p className="poppins-regular text-xs text-neutral200">
           {t("linkAccountSuccessSubtitle")}
         </p>
       </div>
       {!isSigning && routerQuery.redirect_url && (
-        <div className="mt-20 text-primary text-base font-medium font-poppins underline hover:cursor-pointer">
+        <div className="mt-20 text-primary text-base poppins-medium underline hover:cursor-pointer">
           <a href={concateRedirectUrlParams(routerQuery.redirect_url, "")}>
             <a>{t("livenessSuccessButtonTitle")}</a>
           </a>

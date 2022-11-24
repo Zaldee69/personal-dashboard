@@ -20,7 +20,7 @@ type TUrlQuery = {
 
 const PinFormDedicatedChannel = (props: Props) => {
   const router = useRouter();
-  const {t} = i18n
+  const { t } = i18n;
   const {
     random,
     user_identifier,
@@ -45,8 +45,9 @@ const PinFormDedicatedChannel = (props: Props) => {
     message: string;
   }>({ isError: false, message: "" });
   const [isConfirmMode, setIsConfirmMode] = useState<boolean>(false);
-  const [isRequestCheckStatus, setIsRequestCheckStatus] =
+  const [isButtonNumberDisabled, setIsButtonNumberDisabled] =
     useState<boolean>(false);
+  const [isProcessed, setIsProcessed] = useState<boolean>(false);
 
   const digitLength: number = 6;
 
@@ -60,14 +61,19 @@ const PinFormDedicatedChannel = (props: Props) => {
     setPinConfirmError({ isError: false, message: "" });
   };
   const onClickDeleteHandlerConfirmCallback = () => {
+    setIsButtonNumberDisabled(false);
     setPinConfirmError({ isError: false, message: "" });
   };
   const submitFormConfirmCallback = (pinConfirm: string) => {
+    setIsButtonNumberDisabled(true);
+    setIsProcessed(true);
+
     if (pin !== pinConfirm) {
       setPinConfirmErrorAfterSubmit({
         isError: true,
         message: t("confirmPinDoesntMatch"),
       });
+      setIsProcessed(false);
       return;
     }
 
@@ -86,7 +92,6 @@ const PinFormDedicatedChannel = (props: Props) => {
       })
         .then((res) => {
           if (res.success) {
-            setIsConfirmMode(false);
             if (redirect_url) {
               const params = {
                 register_id: registration_id,
@@ -97,12 +102,18 @@ const PinFormDedicatedChannel = (props: Props) => {
                 redirect_url as string,
                 queryString
               );
+            } else {
+              setIsConfirmMode(false);
+              setIsButtonNumberDisabled(false);
+              setIsProcessed(false);
             }
           } else {
             setPinConfirmError({
               isError: true,
               message: res?.message || "gagal",
             });
+            setIsButtonNumberDisabled(true);
+            setIsProcessed(false);
           }
         })
         .catch((err) => {
@@ -110,6 +121,8 @@ const PinFormDedicatedChannel = (props: Props) => {
             isError: true,
             message: err.response?.data?.message || "gagal",
           });
+          setIsButtonNumberDisabled(true);
+          setIsProcessed(false);
         });
     } else {
       RestKycFinalForm({
@@ -121,23 +134,33 @@ const PinFormDedicatedChannel = (props: Props) => {
       })
         .then((res) => {
           if (res.success) {
-            setIsConfirmMode(false);
             if (redirect_url) {
-              const params = {
+              const params: any = {
                 register_id: registration_id,
                 status: res.data.status === "E" ? "S" : res.data.status,
               };
+
+              if (res.data.reason_code) {
+                params.reason_code = res.data.reason_code;
+              }
+
               const queryString = new URLSearchParams(params as any).toString();
               window.top!.location.href = concateRedirectUrlParams(
                 redirect_url as string,
                 queryString
               );
+            } else {
+              setIsConfirmMode(false);
+              setIsButtonNumberDisabled(false);
+              setIsProcessed(false);
             }
           } else {
             setPinConfirmError({
               isError: true,
               message: res?.message || "gagal",
             });
+            setIsButtonNumberDisabled(true);
+            setIsProcessed(false);
           }
         })
         .catch((err) => {
@@ -152,6 +175,8 @@ const PinFormDedicatedChannel = (props: Props) => {
               message: err.response?.data?.message || "gagal",
             });
           }
+          setIsButtonNumberDisabled(true);
+          setIsProcessed(false);
         });
     }
   };
@@ -162,19 +187,21 @@ const PinFormDedicatedChannel = (props: Props) => {
     setPinConfirmError({ isError: false, message: "" });
     setPinConfirmErrorAfterSubmit({ isError: false, message: "" });
     setIsConfirmMode(false);
-    setIsRequestCheckStatus(false);
+    setIsButtonNumberDisabled(false);
+    setIsProcessed(false);
   };
 
   useEffect(() => {
     if (!router.isReady) return;
     setShouldRender(true);
-    setIsRequestCheckStatus(true);
+    setIsButtonNumberDisabled(true);
+    setIsProcessed(true);
     RestKycCheckStep({
       payload: { registerId: registration_id as string },
     })
       .then((res) => {
         if (res.success) {
-          setIsRequestCheckStatus(false);
+          setIsButtonNumberDisabled(false);
           if (res.data.status === "D") {
             if (!res.data.pin_form) {
               router.push({
@@ -187,41 +214,59 @@ const PinFormDedicatedChannel = (props: Props) => {
               });
             } else {
               // should stay.
+              setIsProcessed(false);
               return;
             }
           } else if (res.data.status === "E" || res.data.status === "F") {
-              if (!res.data.pin_form) {
-                if (redirect_url) {
-                  const params = {
-                    register_id: registration_id,
-                    status: res.data.status,
-                  };
-                  const queryString = new URLSearchParams(
-                    params as any
-                  ).toString();
-                  window.top!.location.href = concateRedirectUrlParams(
-                    redirect_url as string,
-                    queryString
-                  );
-                } else {
-                  router.push({
-                    pathname: handleRoute("liveness-failure"),
-                    query: {
-                      ...restRouterQuery,
-                      request_id: registration_id,
-                      redirect_url,
-                    },
-                  });
+            if (!res.data.pin_form) {
+              if (redirect_url) {
+                const params: any = {
+                  register_id: registration_id,
+                  status: res.data.status,
+                };
+
+                if (res.data.reason_code) {
+                  params.reason_code = res.data.reason_code;
                 }
+
+                const queryString = new URLSearchParams(
+                  params as any
+                ).toString();
+                window.top!.location.href = concateRedirectUrlParams(
+                  redirect_url as string,
+                  queryString
+                );
               } else {
-                // should stay.
-                return;
+                const query: any = {
+                  ...restRouterQuery,
+                  request_id: registration_id,
+                  redirect_url,
+                };
+
+                if (res.data.reason_code) {
+                  query.reason_code = res.data.reason_code;
+                }
+
+                router.push({
+                  pathname: handleRoute("liveness-failure"),
+                  query,
+                });
               }
+            } else {
+              // should stay.
+              setIsProcessed(false);
+              return;
+            }
           } else if (res.data.status === "S") {
-            const params = {
+            const params: any = {
               register_id: registration_id,
               status: res.data.status,
             };
+
+            if (res.data.reason_code) {
+              params.reason_code = res.data.reason_code;
+            }
+
             const queryString = new URLSearchParams(params as any).toString();
             if (redirect_url) {
               window.top!.location.href = concateRedirectUrlParams(
@@ -233,15 +278,24 @@ const PinFormDedicatedChannel = (props: Props) => {
                 isError: true,
                 message: res?.message || "pengecekan step berhasil",
               });
-              setIsRequestCheckStatus(true);
+              setIsButtonNumberDisabled(true);
+              setIsProcessed(false);
             }
+          } else {
+            setPinError({
+              isError: true,
+              message: res?.message || "pengecekan step tidak sukses",
+            });
+            setIsButtonNumberDisabled(true);
+            setIsProcessed(false);
           }
         } else {
           setPinError({
             isError: true,
             message: res?.message || "pengecekan step tidak sukses",
           });
-          setIsRequestCheckStatus(true);
+          setIsButtonNumberDisabled(true);
+          setIsProcessed(false);
         }
       })
       .catch((err) => {
@@ -250,14 +304,15 @@ const PinFormDedicatedChannel = (props: Props) => {
             isError: true,
             message: err.response?.data?.data?.errors?.[0],
           });
-          setIsRequestCheckStatus(true);
+          setIsButtonNumberDisabled(true);
         } else {
           setPinError({
             isError: true,
             message: err.response?.data?.message || "pengecekan step gagal",
           });
-          setIsRequestCheckStatus(true);
+          setIsButtonNumberDisabled(true);
         }
+        setIsProcessed(false);
       });
   }, [router.isReady, registration_id]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -281,6 +336,8 @@ const PinFormDedicatedChannel = (props: Props) => {
             isErrorAfterSubmitMessage={pinConfirmErrorAfterSubmit.message}
             isError={pinConfirmError.isError}
             isErrorMessage={pinConfirmError.message}
+            isButtonNumberDisabled={isButtonNumberDisabled}
+            isProcessed={isProcessed}
             backButton={{
               show: true,
               onClickBackCallback: onClickBack,
@@ -301,7 +358,8 @@ const PinFormDedicatedChannel = (props: Props) => {
             isResetAfterSubmit
             isError={pinError.isError}
             isErrorMessage={pinError.message}
-            isButtonNumberDisabled={isRequestCheckStatus}
+            isButtonNumberDisabled={isButtonNumberDisabled}
+            isProcessed={isProcessed}
             subTitle={t("createPinSubtitle")}
             showPoweredByTilaka
           />

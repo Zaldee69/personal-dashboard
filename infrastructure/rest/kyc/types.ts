@@ -8,6 +8,8 @@
 // S -> sukses
 export type TStepStatus = "D" | "A" | "E" | "F" | "S" | "B" | "C";
 
+export type TReasonCode = "0" | "1" | "2" | "3" | null; // 0=sukses, 1=gagal Dukcapil, 2=Liveness gagal, 3=Register ID expired
+
 export type TKycCheckStepRequestData = {
   registerId: string;
 };
@@ -19,6 +21,7 @@ export type TKycCheckStepResponseData = {
     status: TStepStatus;
     token?: string;
     pin_form?: boolean; // shown when status === 'D' || status === 'F'
+    reason_code: TReasonCode;
   };
 };
 
@@ -33,6 +36,7 @@ export type TKycFinalFormResponseData = {
   message: string;
   data: {
     status: string;
+    reason_code: TReasonCode;
   };
 };
 
@@ -45,6 +49,7 @@ export type TKycGenerateActionResponseData = {
   message: string;
   data: {
     actionList: string[];
+    reason_code: TReasonCode;
   };
 };
 
@@ -69,6 +74,7 @@ export type TKycVerificationResponseData = {
     pin_form: boolean;
     config_level: number;
     numFailedLivenessCheck?: number;
+    reason_code: TReasonCode;
   };
 };
 
@@ -115,6 +121,7 @@ export type TKycCheckStepIssueResponseData = {
   data: {
     status: TStepStatus;
     token?: string;
+    reason_code: TReasonCode;
   };
 };
 
@@ -127,6 +134,7 @@ export type TKycGenerateActionIssueResponseData = {
   message: string;
   data: {
     actionList: string[];
+    reason_code: TReasonCode;
   };
 };
 
@@ -143,5 +151,6 @@ export type TKycVerificationIssueResponseData = {
   message: string;
   data: {
     status: string;
+    reason_code: TReasonCode;
   };
 };
