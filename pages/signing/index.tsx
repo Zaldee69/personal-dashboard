@@ -79,7 +79,7 @@ const Signing = () => {
     }
     if (!token) {
       router.replace({
-        pathname: handleRoute("/login"),
+        pathname: handleRoute("login"),
         query: { ...router.query },
       });
     }

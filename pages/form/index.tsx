@@ -178,7 +178,7 @@ const Form: React.FC = () => {
           }
 
           router.replace({
-            pathname: handleRoute("/form/success"),
+            pathname: handleRoute("form/success"),
             query,
           });
         } else {
@@ -386,6 +386,7 @@ const Form: React.FC = () => {
                     ? "border-error "
                     : "border-borderColor focus:ring"
                 }`}
+                autoComplete="off"
               />
               <button
                 onClick={(e) => handleShowPwd("password", e)}

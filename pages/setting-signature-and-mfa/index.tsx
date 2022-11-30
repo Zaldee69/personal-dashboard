@@ -468,6 +468,7 @@ function SettingSignatureAndMFA({}: Props) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cQuery = context.query;
+  const isNotRedirect: boolean = true
   const uuid =
     cQuery.transaction_id || cQuery.request_id || cQuery.registration_id;
 
@@ -492,7 +493,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return { err };
     });
 
-  return serverSideRenderReturnConditions({ context, checkStepResult });
+  return serverSideRenderReturnConditions({ context, checkStepResult, isNotRedirect });
 };
 
 export default SettingSignatureAndMFA;

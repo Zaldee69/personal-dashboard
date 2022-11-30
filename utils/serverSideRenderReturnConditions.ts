@@ -19,10 +19,12 @@ interface IserverSideRenderReturnConditions {
       };
     };
   };
+  isNotRedirect?: boolean
 }
 export const serverSideRenderReturnConditions = ({
   context,
   checkStepResult,
+  isNotRedirect
 }: IserverSideRenderReturnConditions) => {
   const currentPathnameWithoutParams = context.resolvedUrl.split("?")[0];
   const cQuery = context.query;
@@ -165,7 +167,7 @@ export const serverSideRenderReturnConditions = ({
 
         const queryString = new URLSearchParams(params as any).toString();
 
-        if (cQuery.redirect_url) {
+        if (cQuery.redirect_url && !isNotRedirect) {
           return {
             redirect: {
               permanent: false,

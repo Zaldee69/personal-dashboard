@@ -167,7 +167,7 @@ const SigningWithRead = () => {
     localStorage.setItem("count_v2", count ? count.toString() : "0");
     if (!token_v2) {
       router.replace({
-        pathname: handleRoute("/login/v2"),
+        pathname: handleRoute("login/v2"),
         query: { ...router.query },
       });
     } else {
@@ -259,7 +259,7 @@ const SigningWithRead = () => {
               localStorage.removeItem("token_v2");
               localStorage.removeItem("refresh_token_v2");
               router.replace({
-                pathname: handleRoute("/login/v2"),
+                pathname: handleRoute("login/v2"),
                 query: { ...router.query, showAutoLogoutInfo: "1" },
               });
             } else {
@@ -520,7 +520,7 @@ const SigningWithoutRead = () => {
     localStorage.setItem("count_v2", count ? count.toString() : "0");
     if (!token_v2) {
       router.replace({
-        pathname: handleRoute("/login/v2"),
+        pathname: handleRoute("login/v2"),
         query: { ...router.query },
       });
     } else {
@@ -612,7 +612,7 @@ const SigningWithoutRead = () => {
               localStorage.removeItem("token_v2");
               localStorage.removeItem("refresh_token_v2");
               router.replace({
-                pathname: handleRoute("/login/v2"),
+                pathname: handleRoute("login/v2"),
                 query: { ...router.query, showAutoLogoutInfo: "1" },
               });
             } else {
@@ -1054,7 +1054,7 @@ const FRModal: React.FC<IModal> = ({
           <FRCamera
             setModal={setModal}
             setIsFRSuccess={setIsFRSuccess}
-            signingFailedRedirectTo={handleRoute("/login/v2")}
+            signingFailedRedirectTo={handleRoute("login/v2")}
             tokenIdentifier="token_v2"
             callbackCaptureProcessor={captureProcessor}
           />
@@ -1306,27 +1306,24 @@ const ViewerModal: React.FC<IModalViewer> = ({ modal, onClose, viewedDoc }) => {
   const [closeButtonShouldDisabled, setCloseButtonShouldDisabled] =
     useState<boolean>(true);
 
-  const handleScroll = (e: any) => {
-    const bottom =
-      e.target.scrollHeight - Math.ceil(e.target.scrollTop) ===
-      e.target.clientHeight;
+  const handleScroll = (e: any) => {                                  
     const scrollDiv: HTMLDivElement | null =
       document.querySelector("#scrollDiv");
 
-    window.requestAnimationFrame(() => {
-      if (bottom) {
+      const bottom =
+      e.target.scrollHeight - Math.ceil(e.target.scrollTop) ===
+      e.target.clientHeight;
+
+      const scrollTop = Math.round(e.target.scrollTop)
+      const scrollHeight = Math.round(e.target.scrollHeight - e.target.offsetHeight)
+
+      if(scrollTop === scrollHeight || scrollTop - 4 === scrollHeight || bottom ){
         setCloseButtonShouldDisabled(false);
         if (scrollDiv) {
           scrollDiv.style.borderBottomWidth = "4px";
           scrollDiv.style.borderColor = "#DFE1E6";
         }
-      } else {
-        if (scrollDiv) {
-          scrollDiv.style.borderBottomWidth = "4px";
-          scrollDiv.style.borderColor = "transparent";
-        }
       }
-    });
   };
 
   useEffect(() => {

@@ -93,7 +93,7 @@ const Login = () => {
         } else {
           if (certif[0].status == "Aktif") {
             router.replace({
-              pathname: handleRoute("/signing/v2"),
+              pathname: handleRoute("signing/v2"),
               query: {
                 ...queryWithDynamicRedirectURL,
               },
@@ -106,7 +106,7 @@ const Login = () => {
             setCertifModal(true);
           } else {
             router.replace({
-              pathname: handleRoute("/certificate-information"),
+              pathname: handleRoute("certificate-information"),
               query: {
                 ...queryWithDynamicRedirectURL,
                 v2: "1",
@@ -187,6 +187,7 @@ const Login = () => {
                 type={type.password}
                 placeholder={t("passwordPlaceholder")}
                 className={`font-poppins py-3 focus:outline-none border-borderColor focus:ring  placeholder:text-placeholder placeholder:font-light px-2 rounded-md border w-full`}
+                autoComplete="off"
               />
               <button
                 type="button"
@@ -271,7 +272,7 @@ const AutoLogoutInfoModal: React.FC<IModal> = ({ modal, setModal }) => {
   const onClose = () => {
     setModal(false);
     router.replace({
-      pathname: handleRoute("/login/v2"),
+      pathname: handleRoute("login/v2"),
       query: { ...restRouterQuery },
     });
   };

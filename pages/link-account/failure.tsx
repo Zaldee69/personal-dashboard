@@ -36,7 +36,7 @@ const LinkAccountFailure = (props: Props) => {
       <div className="mt-20 text-primary text-base poppins-medium underline hover:cursor-pointer">
         <Link
           href={{
-            pathname: handleRoute("/link-account"),
+            pathname: handleRoute("link-account"),
             query: { ...router.query },
           }}
         >

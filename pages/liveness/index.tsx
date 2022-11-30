@@ -236,9 +236,23 @@ const Liveness = () => {
                 routerQuery.redirect_url as string,
                 queryString
               );
+            } else if (res.data.status === "F" && routerQuery.dashboard_url){
+              // Redirect berdasarkan redirect-url
+              
+              const params: TQueryParams = {
+                request_id: routerQuery.request_id as string,
+                reason_code: res.data.reason_code as string,
+              };
+              const queryString = new URLSearchParams(params as any).toString();
+              const { hostname } = new URL(routerQuery.dashboard_url as string)
+              
+              if(hostname === 'tilaka.id' || hostname.endsWith("tilaka.id")){
+                window.top!.location.href = concateRedirectUrlParams(
+                  routerQuery.dashboard_url as string,
+                  queryString
+                  );
+              }
             } else {
-              console.log("first");
-
               const query: TQueryParams = {
                 ...routerQuery,
                 request_id: router.query.request_id as string,
@@ -329,10 +343,14 @@ const Liveness = () => {
               }
 
               const queryString = new URLSearchParams(params as any).toString();
-              window.top!.location.href = concateRedirectUrlParams(
-                routerQuery.dashboard_url as string,
-                queryString
-              );
+              const { hostname } = new URL(routerQuery.dashboard_url as string)
+              
+              if(hostname === 'tilaka.id' || (hostname).endsWith("tilaka.id")){
+                window.top!.location.href = concateRedirectUrlParams(
+                  routerQuery.dashboard_url as string,
+                  queryString
+                );
+              }
             } else {
               toast.error(finalFormResponse?.message || "gagal", {
                 icon: <XIcon />,
@@ -391,7 +409,6 @@ const Liveness = () => {
             position: "top-center",
           });
 
-          console.log("ususu");
 
           const query: TQueryParams = {
             ...routerQuery,
@@ -448,10 +465,14 @@ const Liveness = () => {
                   const queryString = new URLSearchParams(
                     params as any
                   ).toString();
-                  window.top!.location.href = concateRedirectUrlParams(
-                    routerQuery.dashboard_url as string,
-                    queryString
-                  );
+                  const { hostname } = new URL(routerQuery.dashboard_url as string)
+              
+                  if(hostname === 'tilaka.id' || (hostname).endsWith("tilaka.id")){
+                    window.top!.location.href = concateRedirectUrlParams(
+                      routerQuery.dashboard_url as string,
+                      queryString
+                    );
+                  }
                 } else if (result.data.pin_form && routerQuery.redirect_url) {
                   const params: any = {
                     status: status,

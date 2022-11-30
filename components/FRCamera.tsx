@@ -31,7 +31,7 @@ let dom: any;
 const FRCamera = ({
   setIsFRSuccess,
   setModal,
-  signingFailedRedirectTo = handleRoute("/login"),
+  signingFailedRedirectTo = handleRoute("login"),
   tokenIdentifier = "token",
   countIdentifier = "count",
   callbackCaptureProcessor,

@@ -123,7 +123,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     redirect: {
       permanent: false,
-      destination: handleRoute("/?" + queryString),
+      destination: handleRoute("?" + queryString),
     },
   };
 };
