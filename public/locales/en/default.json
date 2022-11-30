@@ -143,8 +143,8 @@
   "closeYourFace": "Move your face closer",
   "authenticationSuccessTitle": "Authentication Success",
   "authenticationSuccessSubtitle": "Signing is currently in process.\n Notification will be received when document(s)\nare succesfully signed.",
-  "singingReadDocCheckbox": "I have read the document",
-  "singingAgreeDocCheckbox": "I agree to sign the document",
+  "singingReadDocCheckbox": "I have read the documents",
+  "singingAgreeDocCheckbox": "I agree to sign the documents",
   "dindtReceiveOtp": "Din't receive OTP?",
   "resend": "Resend"
 }
