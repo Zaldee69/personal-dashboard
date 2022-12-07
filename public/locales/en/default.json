@@ -146,5 +146,6 @@
   "singingReadDocCheckbox": "I have read the documents",
   "singingAgreeDocCheckbox": "I agree to sign the documents",
   "dindtReceiveOtp": "Din't receive OTP?",
-  "resend": "Resend"
+  "resend": "Resend",
+  "doNotMove": "Please do not move"
 }

@@ -146,5 +146,6 @@
   "singingReadDocCheckbox": "Saya telah membaca dokumen di atas",
   "singingAgreeDocCheckbox": "Saya setuju untuk menandatangani dokumen di atas",
   "dindtReceiveOtp": "Tidak Menerima OTP?",
-  "resend": "Kirim Ulang"
+  "resend": "Kirim Ulang",
+  "doNotMove": "Mohon jangan bergerak"
 }

@@ -47,7 +47,6 @@ const Camera: React.FC<Props> = ({
   humanDone,
   human
 }) => {
-  const backend = new URLSearchParams(window.location.search).get('backend')??'wasm';
   
   const constraints: Constraint = {
     width: 1280,
@@ -170,13 +169,13 @@ const Camera: React.FC<Props> = ({
               if (yaw > -10 && yaw < 10) {
                 if (pitch > -10 && pitch < 10) {
                   let done = await isIndexDone(currentActionIndex);
-                  log(t("dontMove"))
                   if (!done) {
                     await new Promise((resolve) => setTimeout(resolve, 500));
                     await setIndexDone(currentActionIndex);
                     capture.click();
                     clicked = true;
                     progressSetter(100);
+                    log(t("dontMove"), t("doNotMove"))
                   }
                 }
               }
@@ -385,6 +384,7 @@ const Camera: React.FC<Props> = ({
       {
         _isMounted && (
           <div className="relative">
+            <div id="perf" className="absolute text-center font-poppins  text-[#DE350B] top-0 left-0 right-0" ></div>
           <Webcam
             style={{ height: "270px", objectFit: "cover" }}
             className="mt-3 rounded-md sm:w-full md:w-full"

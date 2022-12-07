@@ -29,6 +29,7 @@ import Initializing from "@/components/atoms/Initializing";
 import { ActionGuide1, ActionGuide2 } from "@/components/atoms/ActionGuide";
 import { actionText } from "@/utils/actionText";
 import { assetPrefix } from "next.config";
+import ImageDebugger from "@/components/ImageDebugger";
 
 type TQueryParams = {
   request_id?: string;
@@ -601,6 +602,7 @@ const Liveness = () => {
 
   return (
     <>
+    {/* <ImageDebugger/> */}
       <Head>
         <title>Liveness</title>
         <meta name="viewport" content="initial-scale=1.0, width=device-width" />
