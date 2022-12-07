@@ -165,7 +165,7 @@ function SettingSignatureAndMFA({}: Props) {
           }
         })
         .catch((err) => {
-          if (err.request.status === 401) {
+          if (err.response?.status === 401) {
             toast.dismiss("info");
             toast("Anda harus login terlebih dahulu", {
               type: "error",
@@ -217,7 +217,9 @@ function SettingSignatureAndMFA({}: Props) {
           <div className="flex justify-center">
             <img src="images/ttdSetting.svg" alt="ill" />
           </div>
-          <p className="text-md poppins-regular text-neutral800">{t("chooseSignature")}</p>
+          <p className="text-md poppins-regular text-neutral800">
+            {t("chooseSignature")}
+          </p>
           <div className="mt-2 rounded-md bg-blue50 py-2 px-4 flex items-start">
             <div className="pt-1">
               <InfoIcon />
@@ -376,7 +378,9 @@ function SettingSignatureAndMFA({}: Props) {
                 type="radio"
                 className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 poppins-regular text-_030326">Face Recognition</p>
+              <p className="text-md ml-2.5 poppins-regular text-_030326">
+                Face Recognition
+              </p>
             </label>
             <label className="flex items-center mt-3.5">
               <input
@@ -387,7 +391,9 @@ function SettingSignatureAndMFA({}: Props) {
                 type="radio"
                 className="appearance-none bg-white w-4 h-4 ring-1 ring-neutral40 border-2 border-white border-neutral40 rounded-full checked:bg-primary checked:ring-primary"
               />
-              <p className="text-md ml-2.5 poppins-regular text-_030326">OTP via Email</p>
+              <p className="text-md ml-2.5 poppins-regular text-_030326">
+                OTP via Email
+              </p>
             </label>
             <label className="flex items-center mt-3.5">
               <input
@@ -468,7 +474,7 @@ function SettingSignatureAndMFA({}: Props) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const cQuery = context.query;
-  const isNotRedirect: boolean = true
+  const isNotRedirect: boolean = true;
   const uuid =
     cQuery.transaction_id || cQuery.request_id || cQuery.registration_id;
 
@@ -493,7 +499,11 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       return { err };
     });
 
-  return serverSideRenderReturnConditions({ context, checkStepResult, isNotRedirect });
+  return serverSideRenderReturnConditions({
+    context,
+    checkStepResult,
+    isNotRedirect,
+  });
 };
 
 export default SettingSignatureAndMFA;

@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import XIcon from "@/public/icons/XIcon";
 import { handleRoute } from "./../utils/handleRoute";
-import i18n from "i18"
+import i18n from "i18";
 
 interface Constraint {
   width: number;
@@ -43,7 +43,7 @@ const FRCamera = ({
   };
 
   const dispatch = useDispatch();
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   const document = useSelector((state: RootState) => state.document);
   const signature = useSelector((state: RootState) => state.signature);
@@ -135,7 +135,7 @@ const FRCamera = ({
         })
         .catch((err) => {
           toast.dismiss("info");
-          if (err.request.status === 401) {
+          if (err.response?.status === 401) {
             localStorage.removeItem(tokenIdentifier);
             localStorage.setItem(countIdentifier, "0");
             router.replace({

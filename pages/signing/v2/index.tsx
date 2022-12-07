@@ -183,12 +183,24 @@ const SigningWithRead = () => {
             setDocumentList(res.signed_pdf || []);
             getUserName({ token: token_v2 })
               .then((res) => {
-                const data = JSON.parse(res.data);
-                setTypeMFA(data.typeMfa);
-                setShouldDisableSubmit(false);
+                if (res.success) {
+                  const data = JSON.parse(res.data);
+                  setTypeMFA(data.typeMfa);
+                  setShouldDisableSubmit(false);
+                } else {
+                  toast(
+                    res?.message || "Ada yang salah saat memuat Signature MFA",
+                    {
+                      type: "error",
+                      toastId: "error",
+                      position: "top-center",
+                      icon: XIcon,
+                    }
+                  );
+                }
               })
               .catch((err) => {
-                if (err.request.status === 401) {
+                if (err.response?.status === 401) {
                   restLogout({
                     token: localStorage.getItem("refresh_token_v2"),
                   });
@@ -343,7 +355,14 @@ const SigningWithRead = () => {
               style={{ maxWidth: "360px" }}
             >
               {t("signRequestSubtitle.subtitle1")}
-              {routerQuery.mustread === "1" ? <>{t("signRequestSubtitle.subtitle3")} <EyeIcon3/> {t("signRequestSubtitle.subtitle4")} </>: t("signRequestSubtitle.subtitle2")}
+              {routerQuery.mustread === "1" ? (
+                <>
+                  {t("signRequestSubtitle.subtitle3")} <EyeIcon3 />{" "}
+                  {t("signRequestSubtitle.subtitle4")}{" "}
+                </>
+              ) : (
+                t("signRequestSubtitle.subtitle2")
+              )}
             </p>
           </div>
         </div>
@@ -395,10 +414,8 @@ const SigningWithRead = () => {
           </div>
         </div>
         <div className="flex justify-center">
-          <div style={{ maxWidth: "360px", width: "100%" }} >
-            <div
-              className="flex items-center mt-7"
-            >
+          <div style={{ maxWidth: "360px", width: "100%" }}>
+            <div className="flex items-center mt-7">
               <input
                 id="read"
                 name="read"
@@ -536,12 +553,24 @@ const SigningWithoutRead = () => {
             setDocumentList(res.signed_pdf || []);
             getUserName({ token: token_v2 })
               .then((res) => {
-                const data = JSON.parse(res.data);
-                setTypeMFA(data.typeMfa);
-                setShouldDisableSubmit(false);
+                if (res.success) {
+                  const data = JSON.parse(res.data);
+                  setTypeMFA(data.typeMfa);
+                  setShouldDisableSubmit(false);
+                } else {
+                  toast(
+                    res?.message || "Ada yang salah saat memuat Signature MFA",
+                    {
+                      type: "error",
+                      toastId: "error",
+                      position: "top-center",
+                      icon: XIcon,
+                    }
+                  );
+                }
               })
               .catch((err) => {
-                if (err.request.status === 401) {
+                if (err.response?.status === 401) {
                   restLogout({
                     token: localStorage.getItem("refresh_token_v2"),
                   });
@@ -683,7 +712,14 @@ const SigningWithoutRead = () => {
               style={{ maxWidth: "360px" }}
             >
               {t("signRequestSubtitle.subtitle1")}
-              {routerQuery.mustread === "1" ? <>{t("signRequestSubtitle.subtitle3")} <EyeIcon3/> {t("signRequestSubtitle.subtitle4")} </>: t("signRequestSubtitle.subtitle2")}
+              {routerQuery.mustread === "1" ? (
+                <>
+                  {t("signRequestSubtitle.subtitle3")} <EyeIcon3 />{" "}
+                  {t("signRequestSubtitle.subtitle4")}{" "}
+                </>
+              ) : (
+                t("signRequestSubtitle.subtitle2")
+              )}
             </p>
           </div>
         </div>
@@ -1002,7 +1038,7 @@ const FRModal: React.FC<IModal> = ({
         setIsFRSuccess(false);
         toast.dismiss("info");
         setModal(false);
-        if (err.request.status === 401) {
+        if (err.response?.status === 401) {
           restLogout({ token: localStorage.getItem("refresh_token_v2") });
           localStorage.removeItem("token_v2");
           localStorage.removeItem("refresh_token_v2");
@@ -1143,7 +1179,7 @@ const OTPModal: React.FC<IModal> = ({
         toast.dismiss("loading");
         setModal(false);
         setValues(["", "", "", "", "", ""]);
-        if (err.request.status === 401) {
+        if (err.response?.status === 401) {
           restLogout({ token: localStorage.getItem("refresh_token_v2") });
           localStorage.removeItem("token_v2");
           localStorage.removeItem("refresh_token_v2");
@@ -1306,24 +1342,30 @@ const ViewerModal: React.FC<IModalViewer> = ({ modal, onClose, viewedDoc }) => {
   const [closeButtonShouldDisabled, setCloseButtonShouldDisabled] =
     useState<boolean>(true);
 
-  const handleScroll = (e: any) => {                                  
+  const handleScroll = (e: any) => {
     const scrollDiv: HTMLDivElement | null =
       document.querySelector("#scrollDiv");
 
-      const bottom =
+    const bottom =
       e.target.scrollHeight - Math.ceil(e.target.scrollTop) ===
       e.target.clientHeight;
 
-      const scrollTop = Math.round(e.target.scrollTop)
-      const scrollHeight = Math.round(e.target.scrollHeight - e.target.offsetHeight)
+    const scrollTop = Math.round(e.target.scrollTop);
+    const scrollHeight = Math.round(
+      e.target.scrollHeight - e.target.offsetHeight
+    );
 
-      if(scrollTop === scrollHeight || scrollTop - 4 === scrollHeight || bottom ){
-        setCloseButtonShouldDisabled(false);
-        if (scrollDiv) {
-          scrollDiv.style.borderBottomWidth = "4px";
-          scrollDiv.style.borderColor = "#DFE1E6";
-        }
+    if (
+      scrollTop === scrollHeight ||
+      scrollTop - 4 === scrollHeight ||
+      bottom
+    ) {
+      setCloseButtonShouldDisabled(false);
+      if (scrollDiv) {
+        scrollDiv.style.borderBottomWidth = "4px";
+        scrollDiv.style.borderColor = "#DFE1E6";
       }
+    }
   };
 
   useEffect(() => {

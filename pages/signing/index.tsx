@@ -26,8 +26,8 @@ import { TKycCheckStepResponseData } from "infrastructure/rest/kyc/types";
 import { RestKycCheckStep } from "infrastructure";
 import { serverSideRenderReturnConditions } from "@/utils/serverSideRenderReturnConditions";
 import { concateRedirectUrlParams } from "@/utils/concateRedirectUrlParams";
-import i18n from "i18"
-import Loading from '@/components/Loading';
+import i18n from "i18";
+import Loading from "@/components/Loading";
 
 type TFontSig =
   | "Adine-Kirnberg"
@@ -56,7 +56,7 @@ const Signing = () => {
 
   const dispatch: AppDispatch = useDispatch();
   const res = useSelector((state: RootState) => state.document);
-  const {t}: any = i18n
+  const { t }: any = i18n;
   useEffect(() => {
     const token = localStorage.getItem("token");
     const count = parseInt(localStorage.getItem("count") as string);
@@ -186,7 +186,7 @@ const Configuration: React.FC<{
   openScratchesModal,
   setOpenScratchesModal,
 }) => {
-  const {t}: any = i18n
+  const { t }: any = i18n;
   return (
     <div className="flex flex-row items-center shadow-xl z-10 left-0 fixed py-2 w-full top-0 bg-[rgb(223,225,230)] justify-center gap-10">
       <div className="flex flex-col  ">
@@ -196,7 +196,9 @@ const Configuration: React.FC<{
             height={25}
             src={`${assetPrefix}/images/goresan.svg`}
           />
-          <p className="text-[#727272] text-base poppins-regular ">{t("signatureOption1")}</p>
+          <p className="text-[#727272] text-base poppins-regular ">
+            {t("signatureOption1")}
+          </p>
         </button>
       </div>
       <div className="flex flex-col">
@@ -217,7 +219,7 @@ export const FRModal: React.FC<Active | any> = ({ modal, setModal }) => {
   const router = useRouter();
   const routerQuery = router.query;
   const [isFRSuccess, setIsFRSuccess] = useState<boolean>(false);
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   useEffect(() => {
     if (isFRSuccess && modal) {
@@ -294,7 +296,7 @@ const ChooseFontModal: React.FC<Active> = ({ modal, setModal, tilakaName }) => {
     formSetter(e.currentTarget.value);
     setSig(e.currentTarget);
   };
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   const convertToDataURL = async () => {
     const canvas = await html2canvas(sig.parentNode.children[1], {
@@ -429,7 +431,7 @@ const ChooseScratchModal: React.FC<Active> = ({ modal, setModal }) => {
     dispatch(addScratch(scratch));
   };
 
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   return modal ? (
     <div
@@ -465,14 +467,14 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
   const [successSigning, setSuccessSigning] = useState<boolean>(false);
   const document = useSelector((state: RootState) => state.document);
   const signature = useSelector((state: RootState) => state.signature);
-  const [timeRemaining, setTimeRemaining] = useState<string>("0")
-  const [isCountDone, setIsCountDone] = useState<boolean>(false)
+  const [timeRemaining, setTimeRemaining] = useState<string>("0");
+  const [isCountDone, setIsCountDone] = useState<boolean>(false);
   const router = useRouter();
   const { transaction_id, request_id, ...restRouterQuery } = router.query;
 
   const [values, setValues] = useState(["", "", "", "", "", ""]);
 
-  const {t}: any = i18n
+  const { t }: any = i18n;
 
   const interval = 60000;
 
@@ -484,46 +486,46 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
     setInterval(function () {
       const date: any = new Date();
       const remaining = localStorage.endTime - date;
-      const timeRemaining = Math.floor( remaining / 1000 ).toString()
+      const timeRemaining = Math.floor(remaining / 1000).toString();
       if (remaining >= 1) {
-          setTimeRemaining(timeRemaining)
+        setTimeRemaining(timeRemaining);
       } else {
-          setIsCountDone(false)
+        setIsCountDone(false);
       }
     }, 100);
   };
 
   const handleTriggerSendOTP = () => {
     restGetOtp({})
-          .then((res) => {
-            if(res.success){
-              toast(`Kode OTP telah dikirim ke Email anda`, {
-                type: "info",
-                toastId: "info",
-                isLoading: false,
-                position: "top-center",
-              });
-              timerHandler()
-              reset()
-              setIsCountDone(true)
-            }else {
-              toast.error(res.message, { icon: <XIcon /> });
-            }
-          })
-          .catch(() => {
-            toast.error("Kode OTP gagal dikirim", { icon: <XIcon /> });
+      .then((res) => {
+        if (res.success) {
+          toast(`Kode OTP telah dikirim ke Email anda`, {
+            type: "info",
+            toastId: "info",
+            isLoading: false,
+            position: "top-center",
           });
-  }
+          timerHandler();
+          reset();
+          setIsCountDone(true);
+        } else {
+          toast.error(res.message, { icon: <XIcon /> });
+        }
+      })
+      .catch(() => {
+        toast.error("Kode OTP gagal dikirim", { icon: <XIcon /> });
+      });
+  };
 
   useEffect(() => {
     if (modal && !successSigning && !isCountDone && timeRemaining === "0") {
-      handleTriggerSendOTP()
+      handleTriggerSendOTP();
     } else {
-      setIsCountDone(true)
-      timerHandler()
+      setIsCountDone(true);
+      timerHandler();
     }
   }, [modal]);
-  
+
   const setEndTimeToZero = () => {
     localStorage.endTime = "0";
   };
@@ -558,14 +560,14 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
       },
     })
       .then((res) => {
-        setEndTimeToZero()
+        setEndTimeToZero();
         setSuccessSigning(true);
         toast.dismiss("loading");
         localStorage.setItem("count", "0");
       })
       .catch((err) => {
         toast.dismiss("loading");
-        if (err.request.status === 401) {
+        if (err.response?.status === 401) {
           router.replace({
             pathname: "/login",
             query: { ...router.query },
@@ -578,7 +580,7 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
           localStorage.setItem("count", newCount.toString());
           const count = parseInt(localStorage.getItem("count") as string);
           if (count >= 5) {
-            setEndTimeToZero()
+            setEndTimeToZero();
             localStorage.removeItem("token");
             localStorage.setItem("count", "0");
             restLogout({});
@@ -600,7 +602,7 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
         {successSigning ? (
           <div className="flex flex-col  items-center">
             <p className="poppins-regular block text-center  whitespace-nowrap  font-semibold ">
-              {t('signSuccess')}
+              {t("signSuccess")}
             </p>
             <div className="my-10">
               <Image
@@ -649,9 +651,15 @@ export const OTPModal: React.FC<Active> = ({ modal, setModal }) => {
               values={values}
               onChange={(value, index, values) => setValues(values)}
             />
-            <div className="flex poppins-regular justify-center text-sm gap-1 mt-5" >
-              <p className="text-neutral200" >{t("dindtReceiveOtp")}</p>
-              <div className="text-primary font-semibold">{!isCountDone ? <button onClick={handleTriggerSendOTP} >{t("resend")}</button> : `0:${timeRemaining}`}</div>
+            <div className="flex poppins-regular justify-center text-sm gap-1 mt-5">
+              <p className="text-neutral200">{t("dindtReceiveOtp")}</p>
+              <div className="text-primary font-semibold">
+                {!isCountDone ? (
+                  <button onClick={handleTriggerSendOTP}>{t("resend")}</button>
+                ) : (
+                  `0:${timeRemaining}`
+                )}
+              </div>
             </div>
             <button
               disabled={values.join("").length < 6}
