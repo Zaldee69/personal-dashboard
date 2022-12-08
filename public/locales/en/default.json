@@ -147,5 +147,9 @@
   "singingAgreeDocCheckbox": "I agree to sign the documents",
   "dindtReceiveOtp": "Din't receive OTP?",
   "resend": "Resend",
-  "doNotMove": "Please do not move"
+  "doNotMove": "Please do not move",
+  "offlineModal": {
+    "title": "You're offline",
+    "subtitle": "Please re-check your connection to use Tilaka service."
+  }
 }

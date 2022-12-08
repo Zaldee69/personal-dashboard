@@ -147,5 +147,9 @@
   "singingAgreeDocCheckbox": "Saya setuju untuk menandatangani dokumen di atas",
   "dindtReceiveOtp": "Tidak Menerima OTP?",
   "resend": "Kirim Ulang",
-  "doNotMove": "Mohon jangan bergerak"
+  "doNotMove": "Mohon jangan bergerak",
+  "offlineModal": {
+    "title": "Anda sedang offline",
+    "subtitle": "Periksa kembali koneksi yang Anda gunakan untuk menggunakan layanan Tilaka."
+  }
 }

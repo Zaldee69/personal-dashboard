@@ -8,6 +8,7 @@ import "../styles/globals.css";
 import Script from "next/script";
 import i18n from "../i18";
 import { useEffect, useState } from "react";
+import DisconnectModal from "@/components/atoms/DisconnectModal";
 
 type TcontextClass = {
   success: string;
@@ -33,8 +34,9 @@ function MyApp({ Component, pageProps }: AppProps) {
   const { lang } = router.query;
 
   i18n.changeLanguage(lang as string);
+  
 
-  const [showChild, setShowChild] = useState(false);
+  const [showChild, setShowChild] = useState<boolean>(false);
   useEffect(() => {
     setShowChild(true);
   }, []);
@@ -52,6 +54,7 @@ function MyApp({ Component, pageProps }: AppProps) {
           src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.3.200/pdf.js"
           strategy="beforeInteractive"
         ></Script>
+        <DisconnectModal />
         <Provider store={store}>
           <ToastContainer
             toastClassName={(context: any) =>
