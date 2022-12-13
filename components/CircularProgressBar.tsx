@@ -4,6 +4,8 @@ interface CircularProgressBarProps {
   error: boolean
 }
 
+
+
 const CircularProgressBar: React.FC<CircularProgressBarProps> = ({ percent, error }) => {
   useEffect(() => {
     const progressCircle: any = document.querySelector(".progress-circle");
@@ -31,6 +33,7 @@ const CircularProgressBar: React.FC<CircularProgressBarProps> = ({ percent, erro
   return (
     <svg
       preserveAspectRatio="none"
+      style={{marginTop: "10px"}}
       viewBox="0 0 140 160"
       className="percent svg"
       id="percent"

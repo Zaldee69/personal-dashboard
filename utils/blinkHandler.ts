@@ -38,13 +38,14 @@ const blinkHandler = async ({
     } else if (blinkCount >= 20 && blinkCount <= 29 && distance < 25) {
       progressSetter(65);
       wrongActionSetter(false, "");
-      log(t("dontMove"), t("doNotMove"));
     } else if (blinkCount === 30 && distance < 25) {
       progressSetter(100);
       wrongActionSetter(false, "");
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      log(t("dontMove"), t("doNotMove"));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       let done = await isIndexDone(currentActionIndex);
       if (!done) {
-        await new Promise((resolve) => setTimeout(resolve, 500));
         setIndexDone(currentActionIndex);
         ++currentActionIndex;
         capture.click();
@@ -59,7 +60,7 @@ const blinkHandler = async ({
     log(t("closeYourFace"), "");
   } else {
     wrongActionSetter(true, t("blinkError"));
-    log(t("blinkError"), "");
+    log(t("dontMove"), "");
     blinkCount = 1;
     count = 1;
   }

@@ -125,6 +125,19 @@ const Camera: React.FC<Props> = ({
     }
   }
 
+  const setCircle = () => {
+    const progressCircle: any = document.querySelector(".progress-circle");
+    const horizontalRadius = progressCircle?.rx?.baseVal.value || null;
+    const verticalRadius = progressCircle?.ry?.baseVal.value || null;
+    const circumference =
+      (verticalRadius + horizontalRadius - 60) * 2.7 * Math.PI;
+
+      progressCircle === null
+        ? ""
+        : (progressCircle.style.strokeDashoffset =
+          circumference - (100 / 100) * circumference);
+  }
+
   async function drawLoop() {
     // main screen refresh loop
     let clicked = false;
@@ -168,15 +181,17 @@ const Camera: React.FC<Props> = ({
             if (roll > -10 && roll < 10) {
               if (yaw > -10 && yaw < 10) {
                 if (pitch > -10 && pitch < 10) {
-                  let done = await isIndexDone(currentActionIndex);
-                  if (!done) {
-                    await new Promise((resolve) => setTimeout(resolve, 500));
-                    await setIndexDone(currentActionIndex);
-                    capture.click();
-                    clicked = true;
-                    progressSetter(100);
-                    log(t("dontMove"), t("doNotMove"))
-                  }
+                  setCircle()
+                  await new Promise((resolve) => setTimeout(resolve, 1000));
+                  log(t("dontMove"), t("doNotMove"))
+                  await new Promise((resolve) => setTimeout(resolve, 500));
+                    let done = await isIndexDone(currentActionIndex);
+                    if (!done) {
+                      await setIndexDone(currentActionIndex);
+                      capture.click();
+                      clicked = true;
+                      progressSetter(100);
+                    }
                 }
               }
             }
@@ -384,7 +399,7 @@ const Camera: React.FC<Props> = ({
       {
         _isMounted && (
           <div className="relative">
-            <div id="perf" className="absolute text-center font-poppins  text-[#DE350B] top-0 left-0 right-0" ></div>
+            <div style={{ backgroundColor: "rgba(0, 0, 0, .5)" }} id="perf" className="absolute text-center font-poppins  text-white top-0 left-0 right-0" ></div>
           <Webcam
             style={{ height: "270px", objectFit: "cover" }}
             className="mt-3 rounded-md sm:w-full md:w-full"
