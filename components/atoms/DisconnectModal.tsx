@@ -12,7 +12,7 @@ const DisconnectModal = () => {
   return (
     <div
       style={{ backgroundColor: "rgba(0, 0, 0, .5)" }}
-      className={`fixed z-50 flex items-start transition-all duration-1000 pb-3 justify-center w-full left-0 top-0 h-full ${!status && show ? "block" : "hidden"}`}
+      className={`fixed z-50 items-start transition-all duration-1000 pb-3 justify-center w-full left-0 top-0 h-full ${!status && show ? "flex" : "hidden"}`}
     >
       <div className="bg-white max-w-md font-poppins mt-20 pt-5 p-2 pb-3 rounded-md w-full mx-5">
         <div className="px-5" >
