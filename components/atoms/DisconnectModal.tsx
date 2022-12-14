@@ -17,7 +17,7 @@ const DisconnectModal = () => {
       <div className="bg-white max-w-md font-poppins mt-20 pt-5 p-2 pb-3 rounded-md w-full mx-5">
         <div className="px-5" >
         <div className="flex items-center gap-5" >
-            <Image src={`${assetPrefix}/images/danger.svg`} alt="danger" height={30} width={30} />
+            <img src={`${assetPrefix}/images/danger.jpg`} alt="danger" height={30} width={30} />
             <p>{t("offlineModal.title")}</p>
         </div>
         <p className="mt-5 text-sm text-[#505F79]" >{t("offlineModal.subtitle")}</p>
