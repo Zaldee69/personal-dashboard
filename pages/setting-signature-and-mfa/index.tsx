@@ -54,7 +54,7 @@ function SettingSignatureAndMFA({}: Props) {
     formSetter({ ...form, [e.currentTarget.name]: e.currentTarget.value });
     ref = e.currentTarget;
 
-    if (ref.name !== "mfa_method") {
+    if (ref.name !== "mfa_method" && ref.name !== "signature_type") {
       convertToDataURL();
     }
   };
